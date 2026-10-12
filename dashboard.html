@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .chart-wrap{ height:220px; display:flex; align-items:flex-end; gap:10px; padding:10px 4px 0; }
+  .chart-bar-group{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; justify-content:flex-end; height:100%; }
+  .chart-bars{ display:flex; gap:4px; align-items:flex-end; height:100%; width:100%; justify-content:center; }
+  .cb{ width:14px; border-radius:4px 4px 0 0; transition: height .5s ease; }
+  .cb.income{ background: var(--accent); }
+  .cb.expense{ background: var(--line-strong); }
+  .chart-label{ font-size:11.5px; color:var(--ink-faint); font-weight:600; }
+  .period-tabs{ display:flex; gap:4px; background:var(--paper); border-radius:10px; padding:4px; }
+  .period-tab{ padding:7px 14px; font-size:13px; font-weight:700; border-radius:7px; color:var(--ink-soft); }
+  .period-tab.active{ background:#fff; color:var(--ink); box-shadow:var(--shadow-sm); }
+  .legend{ display:flex; gap:16px; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-top:14px; }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .dot{ width:9px;height:9px;border-radius:50%; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group">
+      <a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.9 2.9l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.5 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.9-2.9l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.9-2.9l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.9 2.9l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="biz-switcher" onclick="openOverlay('bizSwitch')">
+        <div class="biz-avatar" id="bizAvatar">··</div>
+        <div id="bizName" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Loading…</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1 id="dashGreeting">Hello 👋</h1>
+          <div class="sub" id="dashSub">Here's how your business is doing.</div>
+        </div>
+        <button class="btn btn-secondary" onclick="location.href='notifications.html'">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 01-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span style="position:relative;">Notifications<span style="position:absolute;top:-8px;right:-12px;width:7px;height:7px;border-radius:50%;background:var(--red);"></span></span>
+        </button>
+      </div>
+
+      <!-- ALERTS -->
+      <div id="alertBox" style="margin-bottom:24px;"></div>
+
+      <!-- STATS -->
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <div class="stat-label">Income</div>
+          <div class="ledger-figure"><div class="stat-value income num" id="statIncome">₦0</div></div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Expenses</div>
+          <div class="ledger-figure"><div class="stat-value expense num" id="statExpenses">₦0</div></div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Profit</div>
+          <div class="ledger-figure"><div class="stat-value profit num" id="statProfit">₦0</div></div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-label">Money owed to you</div>
+          <div class="ledger-figure"><div class="stat-value owed num" id="statOwed">₦0</div></div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="section-block">
+        <div class="section-title"><h2>Quick actions</h2></div>
+        <div class="quick-actions">
+          <button class="qa-btn" onclick="openOverlay('addSheet')">
+            <div class="qa-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="qa-title">Record Sale</div>
+          </button>
+          <button class="qa-btn" onclick="openOverlay('addSheet')">
+            <div class="qa-icon" style="background:var(--amber-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="qa-title">Record Expense</div>
+          </button>
+          <button class="qa-btn" onclick="openOverlay('addSheet')">
+            <div class="qa-icon" style="background:var(--blue-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--blue);"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="qa-title">Record Payment</div>
+          </button>
+          <button class="qa-btn" onclick="location.href='customers.html'">
+            <div class="qa-icon" style="background:#DDF3E4;"><svg viewBox="0 0 24 24" fill="none" style="color:#1E8E3E;"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21a8 8 0 0116 0" stroke="currentColor" stroke-width="2"/></svg></div>
+            <div class="qa-title">Add Customer</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- CHART + ACTIVITY -->
+      <div class="grid-2" style="align-items:start;">
+        <div class="card card-pad">
+          <div class="section-title" style="margin-bottom:6px;">
+            <h2>Financial overview</h2>
+            <div class="period-tabs">
+              <button class="period-tab" onclick="setPeriod(this,'week')">Week</button>
+              <button class="period-tab active" onclick="setPeriod(this,'month')">Month</button>
+              <button class="period-tab" onclick="setPeriod(this,'year')">Year</button>
+            </div>
+          </div>
+          <div class="chart-wrap" id="chartWrap"></div>
+          <div class="legend">
+            <span><div class="dot" style="background:var(--accent);"></div>Income</span>
+            <span><div class="dot" style="background:var(--line-strong);"></div>Expenses</span>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <div class="section-title"><h2>Recent activity</h2><a href="transactions.html" class="link-more">View all</a></div>
+          <div id="actList">
+                      </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bn-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
+  <a href="transactions.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Activity</a>
+  <button class="bn-fab" onclick="openOverlay('addSheet')"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <a href="customers.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>Customers</a>
+  <a href="more.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
+</nav>
+
+<!-- ADD TRANSACTION SHEET -->
+<div class="overlay" id="addSheet">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="sheetTitle">What do you want to record?</h3>
+      <button class="close-x" onclick="closeOverlay('addSheet')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div id="sheet-picker">
+        <div class="option-tile" onclick="location.href='new-sale.html'">
+          <div class="oi" style="background:var(--accent-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="ot-title">Sale</div><div class="ot-sub">Record a product or service sale</div></div>
+        </div>
+        <div class="option-tile" onclick="location.href='new-payment.html'">
+          <div class="oi" style="background:var(--blue-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--blue);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><div class="ot-title">Money received</div><div class="ot-sub">Log income that isn't a sale</div></div>
+        </div>
+        <div class="option-tile" onclick="location.href='new-expense.html'">
+          <div class="oi" style="background:var(--amber-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><div class="ot-title">Expense</div><div class="ot-sub">Record money spent</div></div>
+        </div>
+        <div class="option-tile" onclick="location.href='customers.html'">
+          <div class="oi" style="background:#DDF3E4;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:#1E8E3E;"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="ot-title">Customer payment</div><div class="ot-sub">Record a debt repayment</div></div>
+        </div>
+        <div class="option-tile" onclick="location.href='new-sale.html?credit=1'">
+          <div class="oi" style="background:var(--red-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--red);"><path d="M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><div class="ot-title">Credit sale</div><div class="ot-sub">Sale on credit, to be paid later</div></div>
+        </div>
+        <div class="option-tile" onclick="closeOverlay('addSheet')">
+          <div class="oi" style="background:var(--line);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--ink-soft);"><path d="M7 7l10 10M7 17L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><div class="ot-title">Transfer</div><div class="ot-sub">Move money between accounts</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BUSINESS SWITCHER -->
+<div class="overlay" id="bizSwitch">
+  <div class="sheet" style="max-width:380px;">
+    <div class="sheet-head"><h3>Switch business</h3><button class="close-x" onclick="closeOverlay('bizSwitch')">✕</button></div>
+    <div class="sheet-body" id="bizList"></div>
+    <div class="sheet-foot"><button class="btn btn-secondary btn-block" onclick="location.href='onboarding.html?new=1'">+ Add another business</button></div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+const ICONS = {
+  sale: `<div class="act-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
+  expense: `<div class="act-icon" style="background:var(--amber-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>`,
+  payment: `<div class="act-icon" style="background:var(--blue-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--blue);"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
+};
+const ALERT_SVG = { amber: `<svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`, blue: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8"/></svg>` };
+const N = n => Recorda.util.naira(n);
+const iso = d => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+let chartData = { week: [], month: [], year: [] };
+let chartLabels = { week: [], month: [], year: ['J','F','M','A','M','J','J','A','S','O','N','D'] };
+
+function renderChart(period){
+  const data = chartData[period], labels = chartLabels[period];
+  const max = Math.max(1, ...data.flat());
+  const wrap = document.getElementById('chartWrap');
+  wrap.innerHTML = '';
+  data.forEach((pair, i) => {
+    const [inc, exp] = pair;
+    const group = document.createElement('div');
+    group.className = 'chart-bar-group';
+    group.innerHTML = `
+      <div class="chart-bars">
+        <div class="cb income" style="height:${inc / max * 160}px"></div>
+        <div class="cb expense" style="height:${exp / max * 160}px"></div>
+      </div>
+      <div class="chart-label">${labels[i]}</div>`;
+    wrap.appendChild(group);
+  });
+}
+function setPeriod(btn, period){
+  document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChart(period);
+}
+
+const sum = (arr, key) => arr.reduce((t, r) => t + Number(r[key]), 0);
+
+function buildCharts(sales, expenses){
+  const now = new Date();
+  const y = now.getFullYear();
+  const days = [...Array(7)].map((_, i) => { const d = new Date(now); d.setDate(now.getDate() - 6 + i); return d; });
+  chartLabels.week = days.map(d => 'SMTWTFS'[d.getDay()]);
+  chartData.week = days.map(d => [
+    sum(sales.filter(s => s.sale_date === iso(d)), 'total'),
+    sum(expenses.filter(e => e.expense_date === iso(d)), 'amount')]);
+  const monthKey = iso(now).slice(0, 7);
+  const bucket = ds => Math.min(Math.floor((parseInt(ds.slice(8, 10)) - 1) / 7), 3);
+  chartLabels.month = ['Wk1', 'Wk2', 'Wk3', 'Wk4'];
+  chartData.month = [0, 1, 2, 3].map(b => [
+    sum(sales.filter(s => s.sale_date.slice(0, 7) === monthKey && bucket(s.sale_date) === b), 'total'),
+    sum(expenses.filter(e => e.expense_date.slice(0, 7) === monthKey && bucket(e.expense_date) === b), 'amount')]);
+  chartData.year = [...Array(12)].map((_, mo) => {
+    const key = y + '-' + String(mo + 1).padStart(2, '0');
+    return [sum(sales.filter(s => s.sale_date.slice(0, 7) === key), 'total'),
+            sum(expenses.filter(e => e.expense_date.slice(0, 7) === key), 'amount')];
+  });
+}
+
+function greeting(){
+  const h = new Date().getHours();
+  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+}
+
+async function loadDashboard(){
+  const now = new Date();
+  const monthStart = iso(new Date(now.getFullYear(), now.getMonth(), 1));
+  const yearStart = iso(new Date(now.getFullYear(), 0, 1));
+  const today = iso(now);
+  const sb = Recorda.sb;
+  try {
+    const bizId = await Recorda.business.currentId();
+    const [biz, profile, bizList] = await Promise.all([Recorda.business.get(), Recorda.auth.profile(), Recorda.business.list()]);
+    const first = (profile.full_name || '').split(' ')[0];
+    document.getElementById('dashGreeting').textContent = `${greeting()}${first ? ', ' + first : ''} 👋`;
+    document.getElementById('dashSub').textContent = `Here's how ${biz.name} is doing this month.`;
+    document.getElementById('bizName').textContent = biz.name;
+    document.getElementById('bizAvatar').textContent = Recorda.util.initials(biz.name);
+    document.getElementById('bizList').innerHTML = bizList.map((b, i) => `
+      <div class="option-tile" style="cursor:pointer; ${b.id === bizId ? 'border-color:var(--accent); background:var(--accent-tint);' : ''}" onclick="Recorda.business.switchTo('${b.id}')">
+        <div class="biz-avatar" style="${Recorda.util.avatarStyle(i)}">${Recorda.util.esc(Recorda.util.initials(b.name))}</div>
+        <div><div class="ot-title">${Recorda.util.esc(b.name)}</div><div class="ot-sub">${Recorda.util.esc(b.type || '')}</div></div>
+      </div>`).join('');
+
+    const s = await Recorda.dashboard.summary(monthStart, today);
+    document.getElementById('statIncome').textContent = N(s.sales_total);
+    document.getElementById('statExpenses').textContent = N(s.expenses_total);
+    document.getElementById('statProfit').textContent = N(s.profit);
+    document.getElementById('statOwed').textContent = N(s.outstanding_debt);
+
+    const [debts, low, sales, expenses, recent] = await Promise.all([
+      Recorda.debts.list(), Recorda.products.lowStock(),
+      sb.from('sales').select('sale_date, total').eq('business_id', biz.id).gte('sale_date', yearStart),
+      sb.from('expenses').select('expense_date, amount').eq('business_id', biz.id).gte('expense_date', yearStart),
+      Recorda.transactions.list({ limit: 5 }),
+    ]);
+
+    const overdue = debts.filter(d => d.overdue).length;
+    let alerts = '';
+    if (overdue) alerts += `<div class="alert-row alert-amber">${ALERT_SVG.amber}${overdue} customer${overdue > 1 ? 's have' : ' has'} overdue balances. <a href="debts.html">Review</a></div>`;
+    if (low.length) alerts += `<div class="alert-row alert-blue">${ALERT_SVG.blue}${low.length} product${low.length > 1 ? 's are' : ' is'} running low. <a href="products.html">View stock</a></div>`;
+    document.getElementById('alertBox').innerHTML = alerts;
+
+    if (sales.error) throw new Error(sales.error.message);
+    if (expenses.error) throw new Error(expenses.error.message);
+    buildCharts(sales.data, expenses.data);
+    const active = document.querySelector('.period-tab.active');
+    renderChart(active ? active.textContent.trim().toLowerCase() : 'month');
+
+    const list = document.getElementById('actList');
+    if (!recent.length) {
+      list.innerHTML = '<p class="text-soft text-sm" style="padding:14px 0;">No activity yet. Record your first sale or expense.</p>';
+    } else {
+      list.innerHTML = recent.map(t => {
+        const out = t.kind === 'expense';
+        return `<div class="activity-row">
+          ${ICONS[t.kind] || ICONS.sale}
+          <div class="act-body"><div class="act-title">${Recorda.util.esc(t.title)}</div><div class="act-sub">${t.kind[0].toUpperCase() + t.kind.slice(1)}${t.payment_method ? ' · ' + Recorda.util.esc(t.payment_method) : ''}</div></div>
+          <div class="act-amount ${out ? 'minus' : 'plus'} num">${out ? '-' : '+'}${N(t.amount)}</div>
+        </div>`;
+      }).join('');
+    }
+  } catch (err) {
+    if (err.message !== 'Not signed in' && err.message !== 'No business yet') showToast(err.message);
+  }
+}
+document.addEventListener('DOMContentLoaded', loadDashboard);
+</script>
+</body>
+</html>

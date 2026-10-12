@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>States — Recorda Design System</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .states-page{ max-width:900px; margin:0 auto; padding:36px 20px 60px; }
+  .state-demo{ margin-bottom:34px; }
+  .state-demo h4{ font-size:12.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); font-weight:700; margin-bottom:10px; }
+  .skeleton{ background: linear-gradient(90deg, var(--line) 25%, #F1EDE3 37%, var(--line) 63%); background-size:400% 100%; animation: shimmer 1.4s ease infinite; border-radius:8px; }
+  @keyframes shimmer{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+  .skel-row{ display:flex; gap:12px; align-items:center; padding:12px 0; }
+  .skel-avatar{ width:38px;height:38px;border-radius:50%; }
+  .skel-line{ height:12px; border-radius:6px; }
+  .error-icon{ width:64px;height:64px;border-radius:50%; background:var(--red-tint); display:flex;align-items:center;justify-content:center; margin:0 auto 16px; }
+  .error-icon svg{ width:28px;height:28px; color:var(--red); }
+</style>
+</head>
+<body>
+<div class="states-page">
+  <a href="dashboard.html" style="display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; color:var(--ink-soft); margin-bottom:20px;">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Dashboard
+  </a>
+  <h1 style="font-size:22px;font-weight:800;margin-bottom:6px;">Empty, loading & error states</h1>
+  <p class="text-soft mb-4">Reference states used consistently across Recorda.</p>
+
+  <div class="state-demo">
+    <h4>Empty state — no customers yet</h4>
+    <div class="card empty-state">
+      <div class="empty-illust"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg></div>
+      <h3>No customers yet</h3>
+      <p>Add your first customer to start tracking purchases and balances.</p>
+      <button class="btn btn-primary mt-3">+ Add Customer</button>
+    </div>
+  </div>
+
+  <div class="state-demo">
+    <h4>Empty state — no products yet</h4>
+    <div class="card empty-state">
+      <div class="empty-illust"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <h3>No products yet</h3>
+      <p>Add a product to start tracking stock, prices and sales.</p>
+      <button class="btn btn-primary mt-3">+ Add Product</button>
+    </div>
+  </div>
+
+  <div class="state-demo">
+    <h4>Loading state — skeleton</h4>
+    <div class="card card-pad">
+      <div class="skel-row"><div class="skeleton skel-avatar"></div><div style="flex:1;"><div class="skeleton skel-line" style="width:40%;margin-bottom:8px;"></div><div class="skeleton skel-line" style="width:65%;"></div></div></div>
+      <div class="skel-row"><div class="skeleton skel-avatar"></div><div style="flex:1;"><div class="skeleton skel-line" style="width:50%;margin-bottom:8px;"></div><div class="skeleton skel-line" style="width:30%;"></div></div></div>
+      <div class="skel-row"><div class="skeleton skel-avatar"></div><div style="flex:1;"><div class="skeleton skel-line" style="width:35%;margin-bottom:8px;"></div><div class="skeleton skel-line" style="width:55%;"></div></div></div>
+    </div>
+  </div>
+
+  <div class="state-demo">
+    <h4>Error state — save failed</h4>
+    <div class="card card-pad" style="text-align:center; padding:40px 24px;">
+      <div class="error-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3 style="font-size:16px;font-weight:800;margin-bottom:6px;">Something went wrong</h3>
+      <p class="text-soft" style="font-size:14px; max-width:340px; margin:0 auto 18px;">We couldn't save that record. Check your internet connection and try again.</p>
+      <div class="flex gap-3" style="justify-content:center;">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="state-demo">
+    <h4>Success toast</h4>
+    <button class="btn btn-primary" onclick="showToast('Sale recorded successfully ✓')">Trigger success toast</button>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>

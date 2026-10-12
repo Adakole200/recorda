@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Records — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .rec-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .rec-card{ padding:20px; }
+  .rec-icon{ width:40px;height:40px;border-radius:10px; background:var(--blue-tint); display:flex;align-items:center;justify-content:center; margin-bottom:14px; }
+  .rec-icon svg{ width:19px;height:19px; color:var(--blue); }
+  .rec-title{ font-weight:800; font-size:15px; margin-bottom:3px; }
+  .rec-count{ font-size:12.5px; color:var(--ink-soft); }
+  .rec-new{ border:1.5px dashed var(--line-strong); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--ink-soft); font-weight:700; font-size:14px; text-align:center; padding:26px; background:transparent; }
+  .rec-new:hover{ border-color:var(--accent); color:var(--accent-deep); }
+  .rec-new svg{ width:24px;height:24px; }
+  @media (max-width:900px){ .rec-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a></nav>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="page-head">
+        <div><h1>My Records</h1><div class="sub">Track anything specific to your business, your way.</div></div>
+        <button class="btn btn-primary" onclick="location.href='create-record-type.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Create Record Type
+        </button>
+      </div>
+
+      <div class="rec-grid">
+        <a href="customers.html" class="card rec-card">
+          <div class="rec-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <div class="rec-title">Customers</div>
+          <div class="rec-count">4 records · built-in</div>
+        </a>
+        <a href="products.html" class="card rec-card">
+          <div class="rec-icon" style="background:var(--amber-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div class="rec-title">Products</div>
+          <div class="rec-count">4 records · built-in</div>
+        </a>
+        <a href="custom-record-list.html" class="card rec-card">
+          <div class="rec-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h15V6H3v7z" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <div class="rec-title">Vehicles</div>
+          <div class="rec-count">2 records · custom</div>
+        </a>
+        <a href="#" class="card rec-card">
+          <div class="rec-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div class="rec-title">Tenants</div>
+          <div class="rec-count">0 records · custom</div>
+        </a>
+        <a href="#" class="card rec-card">
+          <div class="rec-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C8 6 6 9.5 6 13a6 6 0 0012 0c0-3.5-2-7-6-11z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+          <div class="rec-title">Farm Workers</div>
+          <div class="rec-count">0 records · custom</div>
+        </a>
+        <button class="rec-new" onclick="location.href='create-record-type.html'">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Create Record Type
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
+  <a href="transactions.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Activity</a>
+  <button class="bn-fab" onclick="location.href='create-record-type.html'"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <a href="customers.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>Customers</a>
+  <a href="more.html" class="bn-item active"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+</body>
+</html>

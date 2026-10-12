@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Record an Expense — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .form-page{ max-width:520px; margin:0 auto; }
+  .back-link{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; color:var(--ink-soft); margin-bottom:16px; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a></nav>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="form-page">
+        <a href="transactions.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Cancel</a>
+
+        <div id="expForm">
+          <h1 style="font-size:22px;font-weight:800;margin-bottom:4px;">Record an expense</h1>
+          <p class="text-soft" style="margin-bottom:22px;">Keep track of what leaves your business.</p>
+
+          <div class="card card-pad">
+            <div class="field"><label>Amount</label><input type="number" id="exAmount" placeholder="₦0.00"></div>
+            <div class="field">
+              <label>Category</label>
+              <select id="exCat">
+                <option>Transport</option><option>Electricity</option><option>Rent</option><option>Salary</option>
+                <option>Supplies</option><option>Fuel</option><option>Internet</option><option>Marketing</option>
+                <option>Maintenance</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field"><label>Description <span class="hint">(optional)</span></label><input type="text" id="exDesc" placeholder="e.g. Fabric purchase"></div>
+            <div class="field"><label>Payment method</label><select id="exMethod"><option>Cash</option><option>Bank Transfer</option><option>POS</option><option>Mobile Money</option></select></div>
+            <div class="field"><label>Date</label><input type="date" id="exDate"></div>
+          </div>
+
+          <button class="btn btn-primary btn-block mt-4" onclick="recordExpense()">Save Expense</button>
+        </div>
+
+        <div class="hidden" id="expSuccess">
+          <div class="card card-pad success-panel">
+            <div class="success-check"><svg class="check-draw" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3 style="font-size:18px;font-weight:800;">Expense recorded ✓</h3>
+            <p class="text-soft text-sm mt-2">This has been added to your records.</p>
+          </div>
+          <a href="dashboard.html" class="link-more" style="display:block;text-align:center;margin-top:18px;">Back to dashboard</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('exDate').value = new Date().toISOString().slice(0, 10);
+});
+async function recordExpense(){
+  const amount = Number(document.getElementById('exAmount').value);
+  if (!(amount > 0)) { showToast('Enter an amount'); return; }
+  try {
+    await Recorda.expenses.add({
+      amount,
+      category: document.getElementById('exCat').value,
+      description: document.getElementById('exDesc').value.trim() || null,
+      method: document.getElementById('exMethod').value,
+      date: document.getElementById('exDate').value || undefined,
+    });
+  } catch (err) { showToast(err.message); return; }
+  showExpenseSaved();
+}
+function showExpenseSaved(){
+  document.getElementById('expForm').classList.add('hidden');
+  document.getElementById('expSuccess').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

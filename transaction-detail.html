@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Detail — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .form-page{ max-width:520px; margin:0 auto; }
+  .back-link{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; color:var(--ink-soft); margin-bottom:16px; }
+  .td-amount{ text-align:center; padding:22px 0 10px; }
+  .td-amount .num{ font-size:32px; font-weight:800; color:var(--accent-deep); }
+  .detail-row{ display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .detail-row:last-child{ border-bottom:none; }
+  .detail-row .label{ color:var(--ink-soft); }
+  .detail-row .value{ font-weight:700; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a></nav>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="form-page">
+        <a href="transactions.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Transactions</a>
+
+        <div class="card card-pad">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-green">Sale</span>
+            <span class="badge badge-green">Paid</span>
+          </div>
+          <div class="td-amount">
+            <div class="num">+₦35,000</div>
+            <div class="text-soft text-sm mt-2">2 × Native Shirt</div>
+          </div>
+
+          <div style="border-top:1px solid var(--line); margin-top:10px;">
+            <div class="detail-row"><span class="label">Customer</span><span class="value">Musa Ibrahim</span></div>
+            <div class="detail-row"><span class="label">Date</span><span class="value">Aug 24, 2026 · 10:24am</span></div>
+            <div class="detail-row"><span class="label">Payment method</span><span class="value">Cash</span></div>
+            <div class="detail-row"><span class="label">Amount paid</span><span class="value num">₦35,000</span></div>
+            <div class="detail-row"><span class="label">Balance</span><span class="value num">₦0</span></div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+          <button class="btn btn-secondary btn-block" onclick="location.href='receipt.html'">View Receipt</button>
+          <button class="btn btn-primary btn-block" onclick="location.href='receipt.html'">Share on WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+</body>
+</html>

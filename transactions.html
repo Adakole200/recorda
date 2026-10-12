@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group">
+      <a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="biz-switcher" onclick="openOverlay('bizSwitch')">
+        <div class="biz-avatar">AF</div>
+        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Adash Fashion</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="page-head">
+        <div><h1>Transactions</h1><div class="sub">Every sale, expense and payment, in one place.</div></div>
+        <button class="btn btn-primary" onclick="openOverlay('addSheet')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Record Transaction
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="txSearch" placeholder="Search transactions..." oninput="renderTx()">
+        </div>
+        <input type="date" id="txDate" style="max-width:170px;" onchange="renderTx()">
+      </div>
+
+      <div class="toolbar" id="filterChips" style="margin-bottom:22px;">
+        <button class="filter-chip active" onclick="setTxFilter('all', this)">All</button>
+        <button class="filter-chip" onclick="setTxFilter('income', this)">Income</button>
+        <button class="filter-chip" onclick="setTxFilter('sale', this)">Sales</button>
+        <button class="filter-chip" onclick="setTxFilter('expense', this)">Expenses</button>
+        <button class="filter-chip" onclick="setTxFilter('payment', this)">Payments</button>
+        <button class="filter-chip" onclick="setTxFilter('debt', this)">Debt</button>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Customer</th><th>Type</th><th>Payment</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody id="txBody"><tr><td colspan="7" class="text-soft" style="text-align:center;padding:28px;">Loading…</td></tr></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
+  <a href="transactions.html" class="bn-item active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Activity</a>
+  <button class="bn-fab" onclick="openOverlay('addSheet')"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <a href="customers.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>Customers</a>
+  <a href="more.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
+</nav>
+
+<div class="overlay" id="addSheet">
+  <div class="sheet">
+    <div class="sheet-head"><h3>What do you want to record?</h3><button class="close-x" onclick="closeOverlay('addSheet')">✕</button></div>
+    <div class="sheet-body">
+      <div class="option-tile" onclick="location.href='new-sale.html'">
+        <div class="oi" style="background:var(--accent-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="ot-title">Sale</div><div class="ot-sub">Record a product or service sale</div></div>
+      </div>
+      <div class="option-tile" onclick="location.href='new-expense.html'">
+        <div class="oi" style="background:var(--amber-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div><div class="ot-title">Expense</div><div class="ot-sub">Record money spent</div></div>
+      </div>
+      <div class="option-tile" onclick="location.href='customers.html'">
+        <div class="oi" style="background:#DDF3E4;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:#1E8E3E;"><path d="M12 8v5m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div><div class="ot-title">Customer payment</div><div class="ot-sub">Record a debt repayment</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>initFilterChips('#filterChips');</script>
+<script>
+let allTx = [], custMap = {}, txFilter = 'all';
+const N = n => Recorda.util.naira(n);
+function setTxFilter(f, btn){
+  txFilter = f;
+  btn.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTx();
+}
+function renderTx(){
+  const q = (document.getElementById('txSearch').value || '').toLowerCase().trim();
+  const date = document.getElementById('txDate').value;
+  const list = allTx.filter(t => {
+    const cname = (custMap[t.customer_id] || '').toLowerCase();
+    if (q && !(t.title.toLowerCase().includes(q) || cname.includes(q))) return false;
+    if (date && t.txn_date !== date) return false;
+    if (txFilter === 'income') return t.kind === 'sale' || t.kind === 'payment';
+    if (txFilter === 'debt') return t.kind === 'sale' && t.status !== 'paid';
+    if (txFilter !== 'all') return t.kind === txFilter;
+    return true;
+  });
+  const body = document.getElementById('txBody');
+  if (!list.length) { body.innerHTML = '<tr><td colspan="7" class="text-soft" style="text-align:center;padding:28px;">No transactions found.</td></tr>'; return; }
+  body.innerHTML = list.map(t => {
+    const out = t.kind === 'expense';
+    const cname = custMap[t.customer_id];
+    const badge = { sale: 'badge-green', expense: 'badge-amber', payment: 'badge-blue' }[t.kind];
+    const status = t.status === 'partial' ? ['badge-amber', 'Partially paid'] : t.status === 'unpaid' ? ['badge-red', 'Unpaid'] : ['badge-green', 'Paid'];
+    return `<tr onclick="location.href='transaction-detail.html?kind=${t.kind}&id=${t.id}'">
+      <td>${Recorda.util.prettyDate(t.txn_date)}</td>
+      <td class="cell-primary">${Recorda.util.esc(t.title)}</td>
+      <td>${cname ? `<div class="row-flex gap-2"><div class="avatar-sm">${Recorda.util.esc(Recorda.util.initials(cname))}</div>${Recorda.util.esc(cname)}</div>` : '—'}</td>
+      <td><span class="badge ${badge}">${t.kind[0].toUpperCase() + t.kind.slice(1)}</span></td>
+      <td>${Recorda.util.esc(t.payment_method || '—')}</td>
+      <td class="num" style="font-weight:800; ${out ? '' : 'color:var(--accent-deep);'}">${out ? '-' : '+'}${N(t.amount)}</td>
+      <td><span class="badge ${status[0]}">${status[1]}</span></td>
+    </tr>`;
+  }).join('');
+}
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const [tx, customers] = await Promise.all([Recorda.transactions.list({ limit: 200 }), Recorda.customers.list()]);
+    allTx = tx; custMap = Object.fromEntries(customers.map(c => [c.id, c.name]));
+  } catch (err) { showToast(err.message); }
+  renderTx();
+});
+</script>
+</body>
+</html>

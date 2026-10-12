@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .cust-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .cust-card{ padding:18px; }
+  .cust-top{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .cust-avatar{ width:44px;height:44px;border-radius:50%; background:var(--accent-tint); color:var(--accent-deep); display:flex;align-items:center;justify-content:center; font-weight:800; flex-shrink:0; }
+  .cust-name{ font-weight:800; font-size:15px; }
+  .cust-phone{ font-size:12.5px; color:var(--ink-faint); }
+  .cust-stats{ display:flex; justify-content:space-between; padding-top:12px; border-top:1px solid var(--line); }
+  .cust-stat-label{ font-size:11.5px; color:var(--ink-faint); font-weight:600; }
+  .cust-stat-value{ font-weight:800; font-size:14.5px; margin-top:2px; }
+  @media (max-width:900px){ .cust-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group">
+      <a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="biz-switcher" onclick="openOverlay('bizSwitch')">
+        <div class="biz-avatar">AF</div>
+        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Adash Fashion</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="page-head">
+        <div><h1>Customers</h1><div class="sub">Track who buys from you and what they owe.</div></div>
+        <button class="btn btn-primary" onclick="openOverlay('addCustomer')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Add Customer
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="custSearch" placeholder="Search customers..." oninput="renderCustomers()">
+        </div>
+        <button class="filter-chip active" onclick="setCustFilter('all', this)">All</button>
+        <button class="filter-chip" onclick="setCustFilter('balance', this)">With balance</button>
+        <button class="filter-chip" onclick="setCustFilter('overdue', this)">Overdue</button>
+      </div>
+
+      <div class="cust-grid" id="custGrid"></div>
+
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
+  <a href="transactions.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Activity</a>
+  <button class="bn-fab" onclick="openOverlay('addCustomer')"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <a href="customers.html" class="bn-item active"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>Customers</a>
+  <a href="more.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
+</nav>
+
+<div class="overlay" id="addCustomer">
+  <div class="sheet">
+    <div class="sheet-head"><h3>Add Customer</h3><button class="close-x" onclick="closeOverlay('addCustomer')">✕</button></div>
+    <div class="sheet-body" id="addCustomerForm">
+      <div class="field"><label>Full name</label><input type="text" id="cName" placeholder="e.g. Musa Ibrahim"></div>
+      <div class="field"><label>Phone number</label><input type="tel" id="cPhone" placeholder="080X XXX XXXX"></div>
+      <div class="field"><label>Address <span class="hint">(optional)</span></label><input type="text" id="cAddr" placeholder="e.g. Sabon Gari, Kaduna"></div>
+      <div class="field"><label>Notes <span class="hint">(optional)</span></label><textarea id="cNotes" placeholder="Anything worth remembering about this customer"></textarea></div>
+    </div>
+    <div class="success-panel hidden" id="addCustomerSuccess">
+      <div class="success-check"><svg class="check-draw" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3 style="font-size:16px;font-weight:800;">Customer added ✓</h3>
+      <p class="text-soft text-sm mt-2" id="addCustomerMsg">Customer added to your list.</p>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn btn-primary btn-block" id="addCustomerBtn" onclick="saveCustomer()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+async function saveCustomer(){
+  const name = document.getElementById('cName').value.trim();
+  if (!name) { showToast('Enter the customer\'s name'); return; }
+  try {
+    await Recorda.customers.add({
+      name,
+      phone: document.getElementById('cPhone').value.trim() || null,
+      address: document.getElementById('cAddr').value.trim() || null,
+      notes: document.getElementById('cNotes').value.trim() || null,
+    });
+  } catch (err) { showToast(err.message); return; }
+  showCustomerSaved();
+}
+let allCustomers = [], custFilter = 'all';
+const N = n => Recorda.util.naira(n);
+async function loadCustomers(){
+  try { allCustomers = await Recorda.customers.listWithStats(); }
+  catch (err) { showToast(err.message); }
+  renderCustomers();
+}
+function setCustFilter(f, btn){
+  custFilter = f;
+  btn.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderCustomers();
+}
+function renderCustomers(){
+  const q = (document.getElementById('custSearch')?.value || '').toLowerCase().trim();
+  const list = allCustomers.filter(c =>
+    (!q || c.name.toLowerCase().includes(q) || (c.phone || '').includes(q)) &&
+    (custFilter === 'all' || (custFilter === 'balance' && c.balance > 0) || (custFilter === 'overdue' && c.overdue)));
+  const grid = document.getElementById('custGrid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="card card-pad" style="text-align:center; grid-column:1/-1;"><h3 style="font-size:16px; font-weight:800;">No customers found</h3><p class="text-soft text-sm mt-2">Add your first customer with the + button.</p></div>';
+    return;
+  }
+  grid.innerHTML = list.map((c, i) => `
+    <a href="customer-profile.html?id=${c.id}" class="card cust-card">
+      <div class="cust-top">
+        <div class="cust-avatar" style="${Recorda.util.avatarStyle(i)}">${Recorda.util.esc(Recorda.util.initials(c.name))}</div>
+        <div><div class="cust-name">${Recorda.util.esc(c.name)}</div><div class="cust-phone">${Recorda.util.esc(c.phone || 'No phone')}</div></div>
+      </div>
+      <div class="cust-stats">
+        <div><div class="cust-stat-label">Total purchases</div><div class="cust-stat-value num">${N(c.total_purchases)}</div></div>
+        <div><div class="cust-stat-label">Outstanding</div><div class="cust-stat-value num" style="${c.overdue ? 'color:var(--red);' : c.balance > 0 ? 'color:var(--amber);' : ''}">${N(c.balance)}</div></div>
+      </div>
+    </a>`).join('');
+}
+document.addEventListener('DOMContentLoaded', loadCustomers);
+
+function showCustomerSaved(){
+  document.getElementById('addCustomerMsg').textContent = (document.getElementById('cName').value.trim() || 'Customer') + ' has been added to your customer list.';
+  loadCustomers();
+  document.getElementById('addCustomerForm').classList.add('hidden');
+  document.getElementById('addCustomerSuccess').classList.remove('hidden');
+  document.getElementById('addCustomerBtn').textContent = 'Done';
+  document.getElementById('addCustomerBtn').setAttribute('onclick',"closeOverlay('addCustomer')");
+}
+</script>
+</body>
+</html>

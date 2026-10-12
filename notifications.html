@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .back-link{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; color:var(--ink-soft); margin-bottom:16px; }
+  .notif-row{ display:flex; align-items:flex-start; gap:14px; padding:15px 4px; border-bottom:1px solid var(--line); }
+  .notif-row:last-child{ border-bottom:none; }
+  .notif-row.unread{ background:var(--accent-tint); margin:0 -12px; padding:15px 16px; border-radius:var(--r-sm); border-bottom:none; }
+  .notif-dot-icon{ width:36px;height:36px;border-radius:50%; display:flex;align-items:center;justify-content:center; flex-shrink:0; font-size:16px; }
+  .notif-body{ flex:1; }
+  .notif-text{ font-size:14px; font-weight:600; }
+  .notif-time{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a></nav>
+  </aside>
+
+  <div class="main-col">
+    <div class="page" style="max-width:640px;">
+      <a href="dashboard.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Dashboard</a>
+
+      <div class="page-head">
+        <div><h1>Notifications</h1></div>
+        <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all as read</button>
+      </div>
+
+      <div class="card card-pad" id="notifList"><p class="text-soft text-sm">Loading…</p></div>
+
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
+  <a href="transactions.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Activity</a>
+  <button class="bn-fab" onclick="location.href='transactions.html'"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <a href="customers.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>Customers</a>
+  <a href="more.html" class="bn-item active"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+async function markAllRead(){
+  try { await Recorda.notifications.markAllRead(); } catch (err) { showToast(err.message); return; }
+  document.querySelectorAll('.notif-row.unread').forEach(r=>r.classList.remove('unread'));
+  showToast('All notifications marked as read');
+}
+</script>
+<script>
+const NOTIF_STYLE = {
+  low_stock: ['var(--amber-tint)', '📦'], overdue: ['var(--red-tint)', '🔴'],
+  payment: ['var(--accent-tint)', '🟢'], default: ['var(--blue-tint)', '🔵'],
+};
+function timeAgo(iso){
+  const m = Math.floor((Date.now() - new Date(iso)) / 60000);
+  if (m < 1) return 'Just now';
+  if (m < 60) return m + ' min ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
+  const d = Math.floor(h / 24);
+  return d === 1 ? 'Yesterday' : d + ' days ago';
+}
+document.addEventListener('DOMContentLoaded', async () => {
+  const box = document.getElementById('notifList');
+  try {
+    const list = await Recorda.notifications.list();
+    if (!list.length) { box.innerHTML = '<p class="text-soft text-sm" style="padding:10px 0;">You\'re all caught up. Alerts like low stock will show here.</p>'; return; }
+    box.innerHTML = list.map(n => {
+      const [bg, icon] = NOTIF_STYLE[n.type] || NOTIF_STYLE.default;
+      return `<div class="notif-row ${n.is_read ? '' : 'unread'}">
+        <div class="notif-dot-icon" style="background:${bg};">${icon}</div>
+        <div class="notif-body"><div class="notif-text">${Recorda.util.esc(n.title)}${n.body ? ' ' + Recorda.util.esc(n.body) : ''}</div><div class="notif-time">${timeAgo(n.created_at)}</div></div>
+      </div>`;
+    }).join('');
+  } catch (err) { showToast(err.message); }
+});
+</script>
+</body>
+</html>

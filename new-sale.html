@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Record a Sale — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .form-page{ max-width:560px; margin:0 auto; }
+  .back-link{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; color:var(--ink-soft); margin-bottom:16px; }
+  .line-item{ display:grid; grid-template-columns:1fr 70px 100px; gap:10px; align-items:end; margin-bottom:12px; }
+  .line-item .field{ margin-bottom:0; }
+  .totals-box{ background:var(--paper); border-radius:var(--r-md); padding:16px; margin-top:16px; }
+  .totals-row{ display:flex; justify-content:space-between; font-size:14px; padding:6px 0; }
+  .totals-row.final{ font-weight:800; font-size:16px; border-top:1px solid var(--line); margin-top:6px; padding-top:12px; }
+  .success-actions{ display:flex; gap:10px; margin-top:20px; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a></nav>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="form-page">
+        <a href="transactions.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Cancel</a>
+
+        <div id="saleForm">
+          <h1 style="font-size:22px;font-weight:800;margin-bottom:4px;">Record a sale</h1>
+          <p class="text-soft" style="margin-bottom:22px;">Log a sale and we'll handle the totals.</p>
+
+          <div class="card card-pad">
+            <div class="field">
+              <label>Customer <span class="hint">(optional)</span></label>
+              <select id="saleCustomer" onchange="if(this.value==='__new') location.href='customers.html'"><option value="">Walk-in customer</option></select>
+            </div>
+
+            <label style="font-size:13px;font-weight:600;color:var(--ink-soft); display:block; margin-bottom:8px;">Items</label>
+            <datalist id="prodList"></datalist>
+            <div id="saleItems">
+              <div class="line-item">
+                <div class="field"><input type="text" class="li-name" list="prodList" placeholder="Product" oninput="onProductInput(this)"></div>
+                <div class="field"><input type="number" class="li-qty" placeholder="Qty" value="1" min="1" oninput="recalcSale()"></div>
+                <div class="field"><input type="number" class="li-price" placeholder="Price" oninput="recalcSale()"></div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm mb-3" style="padding-left:0;" onclick="addSaleItem()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Add another item
+            </button>
+
+            <div class="grid-2">
+              <div class="field"><label>Discount <span class="hint">(optional)</span></label><input type="number" id="saleDiscount" placeholder="₦0.00" oninput="recalcSale()"></div>
+              <div class="field"><label>Payment method</label><select id="saleMethod" onchange="recalcSale()"><option>Cash</option><option>Bank Transfer</option><option>POS</option><option>USSD</option><option>Credit</option></select></div>
+            </div>
+
+            <div class="totals-box">
+              <div class="totals-row"><span class="text-soft">Total</span><span class="num" style="font-weight:700;" id="saleTotal">₦0</span></div>
+              <div class="field" style="margin:10px 0 0;">
+                <label>Amount paid</label>
+                <input type="number" id="salePaid" placeholder="Leave blank if fully paid" oninput="paidTouched=true; recalcSale()">
+              </div>
+              <div class="totals-row final"><span>Balance</span><span class="num" id="saleBalance">₦0</span></div>
+            </div>
+
+            <div class="field mt-3"><label>Date</label><input type="date" id="saleDate"></div>
+            <div class="field mt-3" id="dueWrap" style="display:none;"><label>Balance due by <span class="hint">(optional)</span></label><input type="date" id="saleDue"></div>
+          </div>
+
+          <button class="btn btn-primary btn-block mt-4" id="saleBtn" onclick="recordSale()">Record Sale</button>
+        </div>
+
+        <!-- SUCCESS STATE -->
+        <div class="hidden" id="saleSuccess">
+          <div class="card card-pad success-panel">
+            <div class="success-check"><svg class="check-draw" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <h3 style="font-size:18px;font-weight:800;">Sale recorded successfully ✓</h3>
+            <p class="text-soft text-sm mt-2" id="saleSummary"></p>
+            <div class="success-actions">
+              <button class="btn btn-secondary btn-block" id="viewReceiptBtn" onclick="location.href='receipt.html'">View Receipt</button>
+              <button class="btn btn-primary btn-block" id="waShareBtn" onclick="location.href='receipt.html'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17.5 3.5a4 4 0 11-3 6.6L8 14a4 4 0 11-1.4-2.6l6.5-3.9a4 4 0 013.4-3.6z" stroke="currentColor" stroke-width="1.6"/></svg>
+                Share on WhatsApp
+              </button>
+            </div>
+          </div>
+          <a href="dashboard.html" class="link-more" style="display:block;text-align:center;margin-top:18px;">Back to dashboard</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+let products = [], customers = [], paidTouched = false;
+const naira = n => Recorda.util.naira(n);
+
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('saleDate').value = new Date().toISOString().slice(0, 10);
+  try {
+    [products, customers] = await Promise.all([Recorda.products.list(), Recorda.customers.list()]);
+    document.getElementById('prodList').innerHTML = products.map(p => `<option value="${p.name.replace(/"/g, '&quot;')}">`).join('');
+    const sel = document.getElementById('saleCustomer');
+    sel.innerHTML = '<option value="">Walk-in customer</option>' +
+      customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('') +
+      '<option value="__new">+ Add new customer</option>';
+  } catch (err) { showToast(err.message); }
+});
+
+function onProductInput(input) {
+  const p = products.find(x => x.name.toLowerCase() === input.value.trim().toLowerCase());
+  const row = input.closest('.line-item');
+  row.dataset.productId = p ? p.id : '';
+  if (p) row.querySelector('.li-price').value = p.selling_price;
+  recalcSale();
+}
+
+function addSaleItem() {
+  const row = document.querySelector('#saleItems .line-item').cloneNode(true);
+  row.dataset.productId = '';
+  row.querySelectorAll('input').forEach(i => i.value = '');
+  row.querySelector('.li-qty').value = 1;
+  document.getElementById('saleItems').appendChild(row);
+}
+
+function readItems() {
+  return [...document.querySelectorAll('#saleItems .line-item')].map(r => ({
+    product_id: r.dataset.productId || null,
+    name: r.querySelector('.li-name').value.trim(),
+    qty: parseInt(r.querySelector('.li-qty').value) || 0,
+    price: Number(r.querySelector('.li-price').value) || 0,
+  })).filter(i => i.name && i.qty > 0);
+}
+
+function saleNumbers() {
+  const subtotal = readItems().reduce((t, i) => t + i.qty * i.price, 0);
+  const discount = Number(document.getElementById('saleDiscount').value) || 0;
+  const total = Math.max(subtotal - discount, 0);
+  const credit = document.getElementById('saleMethod').value === 'Credit';
+  const raw = document.getElementById('salePaid').value;
+  const paid = raw === '' ? (credit ? 0 : total) : Math.min(Number(raw), total);
+  return { total, paid, balance: total - paid };
+}
+
+function recalcSale() {
+  const n = saleNumbers();
+  document.getElementById('saleTotal').textContent = naira(n.total);
+  document.getElementById('saleBalance').textContent = naira(n.balance);
+  document.getElementById('dueWrap').style.display = n.balance > 0 ? 'block' : 'none';
+}
+
+async function recordSale() {
+  const items = readItems();
+  if (!items.length) { showToast('Add at least one item'); return; }
+  const n = saleNumbers();
+  const customerId = document.getElementById('saleCustomer').value || null;
+  const method = document.getElementById('saleMethod').value;
+  const btn = document.getElementById('saleBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  let saleId;
+  try {
+    saleId = await Recorda.sales.record({
+      customerId, items,
+      discount: Number(document.getElementById('saleDiscount').value) || 0,
+      method, paid: n.paid,
+      date: document.getElementById('saleDate').value || undefined,
+      dueDate: document.getElementById('saleDue').value || null,
+    });
+  } catch (err) {
+    showToast(err.message); btn.disabled = false; btn.textContent = 'Record Sale'; return;
+  }
+  // success panel
+  const summary = items.map(i => `${i.qty} × ${i.name}`).join(', ');
+  document.getElementById('saleSummary').textContent = `${naira(n.total)} · ${summary} · ${method}` + (n.balance > 0 ? ` · ${naira(n.balance)} owing` : '');
+  document.getElementById('viewReceiptBtn').onclick = () => location.href = 'receipt.html?id=' + saleId;
+  const cust = customers.find(c => c.id === customerId);
+  const msg = `Receipt from ${document.title.split('·')[0].trim() || 'Recorda'}\n${items.map(i => `${i.qty} × ${i.name} @ ${naira(i.price)}`).join('\n')}\nTotal: ${naira(n.total)}` +
+              (n.balance > 0 ? `\nBalance owing: ${naira(n.balance)}` : '\nPaid in full. Thank you!');
+  document.getElementById('waShareBtn').onclick = () => window.open(Recorda.util.whatsappLink(cust?.phone, msg), '_blank');
+  document.getElementById('saleForm').classList.add('hidden');
+  document.getElementById('saleSuccess').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

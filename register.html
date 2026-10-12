@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create your account — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .auth-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .auth-card{ width:100%; max-width:400px; }
+  .auth-brand{ display:flex; align-items:center; gap:9px; justify-content:center; margin-bottom:28px; }
+  .auth-brand .brand-mark{ width:32px;height:32px;border-radius:9px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--display); }
+  .auth-brand span{ font-weight:800; font-size:19px; }
+  .auth-card h1{ font-size:21px; font-weight:800; text-align:center; margin-bottom:6px; }
+  .auth-card p.sub{ text-align:center; color:var(--ink-soft); font-size:14px; margin-bottom:26px; }
+  .auth-foot{ text-align:center; margin-top:22px; font-size:14px; color:var(--ink-soft); }
+  .auth-foot a{ font-weight:700; color:var(--accent); }
+  .terms-note{ font-size:12.5px; color:var(--ink-faint); text-align:center; margin-top:14px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <a href="index.html" class="auth-brand"><div class="brand-mark">R</div><span>Recorda</span></a>
+    <div class="card card-pad">
+      <h1>Create your account</h1>
+      <p class="sub">Takes less than a minute. No card needed.</p>
+
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" placeholder="Joseph Emmanuel" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@business.com" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" placeholder="080X XXX XXXX" required>
+        </div>
+        <div class="field">
+          <label for="pw">Password</label>
+          <input type="password" id="pw" placeholder="Create a password" required>
+        </div>
+        <button type="submit" id="regBtn" class="btn btn-primary btn-block">Create account</button>
+      </form>
+      <p class="terms-note">By continuing, you agree to Recorda's Terms and Privacy Policy.</p>
+    </div>
+    <div class="auth-foot">Already have an account? <a href="login.html">Log in</a></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.redirectIfSignedIn();</script>
+<script>
+async function handleRegister(e){
+  e.preventDefault();
+  const btn = document.getElementById('regBtn');
+  const pw = document.getElementById('pw').value;
+  if (pw.length < 6) { showToast('Password must be at least 6 characters'); return; }
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  try {
+    const data = await Recorda.auth.signUp({
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      password: pw,
+    });
+    if (data.session) { location.href = 'onboarding.html'; }
+    else { showToast('Check your email to confirm your account, then log in.'); btn.textContent = 'Check your email'; }
+  } catch (err) {
+    showToast(err.message); btn.disabled = false; btn.textContent = 'Create account';
+  }
+}
+</script>
+</body>
+</html>

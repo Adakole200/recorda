@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .prod-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .prod-card{ padding:16px; position:relative; }
+  .prod-thumb{ width:100%; height:100px; border-radius:10px; background:var(--paper); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .prod-thumb svg{ width:32px;height:32px; color:var(--ink-faint); }
+  .prod-name{ font-weight:700; font-size:14.5px; margin-bottom:2px; }
+  .prod-stock{ font-size:12.5px; color:var(--ink-soft); }
+  .prod-price{ font-weight:800; margin-top:8px; }
+  .low-badge{ position:absolute; top:12px; right:12px; }
+  @media (max-width:900px){ .prod-grid{ grid-template-columns:repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <nav class="nav-group">
+      <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
+      <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
+      <a href="customers.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0M17 5.5a3.5 3.5 0 010 7M21 20a6 6 0 00-6.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Customers</a>
+      <a href="products.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Products</a>
+      <a href="expenses.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Expenses</a>
+      <a href="debts.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Debts</a>
+      <a href="reports.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 10h6M9 14h6M9 18h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Reports</a>
+      <a href="records.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Records</a>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-group"><a href="settings.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>Settings</a></nav>
+  </aside>
+
+  <div class="main-col">
+    <div class="page">
+      <div class="page-head">
+        <div><h1>Products</h1><div class="sub">Manage stock and pricing.</div></div>
+        <button class="btn btn-primary" onclick="location.href='add-product.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Add Product
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="prodSearch" placeholder="Search products..." oninput="renderProducts()">
+        </div>
+        <button class="filter-chip active" onclick="setProdFilter(false, this)">All</button>
+        <button class="filter-chip" onclick="setProdFilter(true, this)">Low stock</button>
+        <select id="prodCat" style="max-width:160px; min-height:44px;" onchange="renderProducts()"><option value="">All categories</option></select>
+      </div>
+
+      <div class="prod-grid" id="prodGrid"></div>
+
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
+  <a href="transactions.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Activity</a>
+  <button class="bn-fab" onclick="location.href='add-product.html'"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <a href="customers.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>Customers</a>
+  <a href="more.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+let allProducts = [], lowOnly = false;
+const N = n => Recorda.util.naira(n);
+function setProdFilter(low, btn){
+  lowOnly = low;
+  btn.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+function renderProducts(){
+  const q = (document.getElementById('prodSearch').value || '').toLowerCase().trim();
+  const cat = document.getElementById('prodCat').value;
+  const list = allProducts.filter(p =>
+    (!q || p.name.toLowerCase().includes(q)) && (!cat || p.category === cat) &&
+    (!lowOnly || p.quantity <= p.low_stock_threshold));
+  const grid = document.getElementById('prodGrid');
+  if (!list.length) { grid.innerHTML = '<div class="card card-pad" style="text-align:center; grid-column:1/-1;"><h3 style="font-size:16px; font-weight:800;">No products yet</h3><p class="text-soft text-sm mt-2">Tap Add Product to create your first one.</p></div>'; return; }
+  grid.innerHTML = list.map(p => `
+    <a href="product-details.html?id=${p.id}" class="card prod-card">
+      ${p.quantity <= p.low_stock_threshold ? '<div class="low-badge"><span class="badge badge-red">Low stock</span></div>' : ''}
+      <div class="prod-thumb">${p.image_url
+        ? `<img src="${Recorda.util.esc(p.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`
+        : '<svg viewBox="0 0 24 24" fill="none"><path d="M6 2l1.5 4h9L18 2M6 8h12l-1 12H7L6 8z" stroke="currentColor" stroke-width="1.6"/></svg>'}</div>
+      <div class="prod-name">${Recorda.util.esc(p.name)}</div>
+      <div class="prod-stock">Stock: ${p.quantity}</div>
+      <div class="prod-price num">${N(p.selling_price)}</div>
+    </a>`).join('');
+}
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    allProducts = await Recorda.products.list();
+    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    document.getElementById('prodCat').innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option>${Recorda.util.esc(c)}</option>`).join('');
+  } catch (err) { showToast(err.message); }
+  renderProducts();
+});
+</script>
+</body>
+</html>

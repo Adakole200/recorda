@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set up your business — Recorda</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .ob-wrap{ min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:24px; }
+  .ob-top{ width:100%; max-width:520px; display:flex; align-items:center; gap:14px; padding:8px 0 32px; }
+  .ob-progress{ flex:1; height:6px; background:var(--line); border-radius:99px; overflow:hidden; }
+  .ob-progress-fill{ height:100%; background:var(--accent); border-radius:99px; transition:width .35s ease; }
+  .ob-step-label{ font-size:12.5px; font-weight:700; color:var(--ink-soft); white-space:nowrap; }
+  .ob-card{ width:100%; max-width:520px; }
+  .ob-panel{ display:none; }
+  .ob-panel.active{ display:block; }
+  .ob-panel h1{ font-size:22px; font-weight:800; text-align:center; margin-bottom:8px; }
+  .ob-panel p.sub{ text-align:center; color:var(--ink-soft); font-size:14.5px; margin-bottom:28px; }
+
+  .type-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:6px; }
+  .type-tile{
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+    padding:15px; border-radius:var(--r-md); border:1.5px solid var(--line);
+    background:var(--paper-raised); text-align:left;
+  }
+  .type-tile svg{ width:20px;height:20px; color:var(--ink-soft); }
+  .type-tile span{ font-weight:700; font-size:13.5px; }
+  .type-tile.selected{ border-color:var(--accent); background:var(--accent-tint); }
+  .type-tile.selected svg{ color:var(--accent-deep); }
+
+  .select-card{
+    display:flex; align-items:center; gap:13px;
+    padding:16px; border-radius:var(--r-md); border:1.5px solid var(--line);
+    margin-bottom:10px; background:var(--paper-raised);
+  }
+  .select-card:hover{ border-color:var(--line-strong); }
+  .select-card.selected{ border-color:var(--accent); background:var(--accent-tint); }
+  .select-card .sc-icon{ width:38px;height:38px;border-radius:10px; background:var(--paper); display:flex;align-items:center;justify-content:center; flex-shrink:0; }
+  .select-card svg{ width:19px;height:19px; color:var(--ink-soft); }
+  .select-card.selected .sc-icon{ background:#fff; }
+  .select-card.selected svg{ color:var(--accent-deep); }
+  .select-card .sc-title{ font-weight:700; font-size:14.5px; flex:1; }
+  .sc-check{ width:22px;height:22px;border-radius:50%; border:1.5px solid var(--line-strong); flex-shrink:0; }
+  .select-card.selected .sc-check{ background:var(--accent); border-color:var(--accent); position:relative; }
+  .select-card.selected .sc-check::after{ content:"✓"; color:#fff; font-size:13px; font-weight:800; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+
+  .ob-done{ text-align:center; padding:10px 0; }
+  .ob-done-icon{ width:76px;height:76px;border-radius:50%; background:var(--accent-tint); display:flex;align-items:center;justify-content:center; margin:0 auto 20px; }
+  .ob-done-icon svg{ width:36px;height:36px; color:var(--accent); }
+
+  .ob-actions{ display:flex; gap:10px; margin-top:24px; }
+</style>
+</head>
+<body>
+<div class="ob-wrap">
+  <div class="ob-top">
+    <div class="ob-progress"><div class="ob-progress-fill" id="progressFill" style="width:33.3%"></div></div>
+    <div class="ob-step-label" id="stepLabel">Step 1 of 3</div>
+  </div>
+
+  <div class="ob-card card card-pad">
+
+    <!-- STEP 1 -->
+    <div class="ob-panel active" id="panel-1">
+      <h1>What do you call your business?</h1>
+      <p class="sub">This is how it'll appear on your receipts and reports.</p>
+      <div class="field">
+        <label for="bizname">Business name</label>
+        <input type="text" id="bizname" placeholder="e.g. Adash Fashion">
+      </div>
+      <div class="field">
+        <label>Business type</label>
+        <div class="type-grid" id="typeGrid">
+          <button type="button" class="type-tile" data-type="Retail"><svg viewBox="0 0 24 24" fill="none"><path d="M3 3h18v4H3V3zm0 6h18v12H3V9z" stroke="currentColor" stroke-width="1.8"/></svg><span>Retail</span></button>
+          <button type="button" class="type-tile" data-type="Fashion"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2l1.5 4h9L18 2M6 8h12l-1 12H7L6 8z" stroke="currentColor" stroke-width="1.8"/></svg><span>Fashion</span></button>
+          <button type="button" class="type-tile" data-type="Food"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11a8 8 0 0116 0v7a2 2 0 01-2 2H6a2 2 0 01-2-2v-7z" stroke="currentColor" stroke-width="1.8"/></svg><span>Food</span></button>
+          <button type="button" class="type-tile" data-type="Services"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 21a8 8 0 0116 0" stroke="currentColor" stroke-width="1.8"/></svg><span>Services</span></button>
+          <button type="button" class="type-tile" data-type="Agriculture"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C8 6 6 9.5 6 13a6 6 0 0012 0c0-3.5-2-7-6-11z" stroke="currentColor" stroke-width="1.8"/></svg><span>Agriculture</span></button>
+          <button type="button" class="type-tile" data-type="Transport"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h15V6H3v7z" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/></svg><span>Transport</span></button>
+          <button type="button" class="type-tile" data-type="Real Estate"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8"/></svg><span>Real Estate</span></button>
+          <button type="button" class="type-tile" data-type="Other"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg><span>Other</span></button>
+        </div>
+      </div>
+      <div class="ob-actions">
+        <button class="btn btn-primary btn-block" onclick="goToStep(2)">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="ob-panel" id="panel-2">
+      <h1>What do you want to keep track of?</h1>
+      <p class="sub">Pick as many as you need — you can change this anytime.</p>
+
+      <div class="select-card" data-track="Money"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 6H9.5a3 3 0 000 6h5a3 3 0 010 6H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="sc-title">Money</div><div class="sc-check"></div></div>
+      <div class="select-card" data-track="Sales"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><div class="sc-title">Sales</div><div class="sc-check"></div></div>
+      <div class="select-card" data-track="Customers"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="sc-title">Customers</div><div class="sc-check"></div></div>
+      <div class="select-card" data-track="Products"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8"/><path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="sc-title">Products</div><div class="sc-check"></div></div>
+      <div class="select-card" data-track="Debts"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="sc-title">Debts</div><div class="sc-check"></div></div>
+      <div class="select-card" data-track="Expenses"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="sc-title">Expenses</div><div class="sc-check"></div></div>
+      <div class="select-card" data-track="Other records"><div class="sc-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg></div><div class="sc-title">Other records</div><div class="sc-check"></div></div>
+
+      <div class="ob-actions">
+        <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+        <button class="btn btn-primary btn-block" id="obFinishBtn" onclick="finishOnboarding()">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="ob-panel" id="panel-3">
+      <div class="ob-done">
+        <div class="ob-done-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h1>You're ready!</h1>
+        <p class="sub" id="readySub">Your business is set up. Let's start recording.</p>
+        <a href="dashboard.html" class="btn btn-primary btn-block">Start Recording</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+<script>Recorda.sb.auth.getSession().then(({data})=>{ if(!data.session) location.href='login.html'; else if(!location.search.includes('new=1')) Recorda.business.currentId().then(id=>{ if(id) location.href='dashboard.html'; }); });</script>
+<script>
+  document.querySelectorAll('.type-tile').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.type-tile').forEach(x=>x.classList.remove('selected'));
+      t.classList.add('selected');
+    });
+  });
+  document.querySelectorAll('.select-card').forEach(c=>{
+    c.addEventListener('click', ()=> c.classList.toggle('selected'));
+  });
+
+  async function finishOnboarding(){
+    const name = document.getElementById('bizname').value.trim();
+    if (!name) { showToast('Please enter your business name'); goToStep(1); return; }
+    const type = document.querySelector('.type-tile.selected')?.dataset.type || 'Other';
+    const tracking = [...document.querySelectorAll('.select-card.selected')].map(c => c.dataset.track);
+    const btn = document.getElementById('obFinishBtn');
+    btn.disabled = true; btn.textContent = 'Setting up…';
+    try {
+      await Recorda.business.create({ name, type, tracking });
+      goToStep(3);
+    } catch (err) {
+      showToast(err.message);
+    }
+    btn.disabled = false; btn.textContent = 'Continue';
+  }
+
+  function goToStep(n){
+    document.querySelectorAll('.ob-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+n).classList.add('active');
+    document.getElementById('progressFill').style.width = (n/3*100)+'%';
+    document.getElementById('stepLabel').textContent = 'Step '+n+' of 3';
+    if(n===3){
+      const name = document.getElementById('bizname').value || 'Your business';
+      document.getElementById('readySub').textContent = name+' is set up. Let\'s start recording.';
+    }
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
