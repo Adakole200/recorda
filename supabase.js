@@ -14,8 +14,14 @@ const SUPABASE_ANON_KEY = 'sb_publishable_VzAKk-XteHKkvYAwuCqK_w_4mMPbOOz'; // a
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Throw on Supabase errors so pages can use try/catch + showToast
+function friendly(msg) {
+  if (/row-level security|violates row-level/i.test(msg))
+    return 'You don\'t have permission to do that. Your role may be read-only, or this business may be suspended.';
+  if (/Failed to fetch|NetworkError/i.test(msg)) return 'Network problem. Check your connection and try again.';
+  return msg;
+}
 function unwrap({ data, error }) {
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(friendly(error.message));
   return data;
 }
 
@@ -54,6 +60,17 @@ const Recorda = {
       localStorage.removeItem(BIZ_KEY);
       await sb.auth.signOut();
       location.href = 'login.html';
+    },
+
+    // login.html → "Forgot password?"
+    async resetPassword(email) {
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset-password.html' });
+      if (error) throw new Error(error.message);
+    },
+    // reset-password.html and settings → Security
+    async updatePassword(newPassword) {
+      const { error } = await sb.auth.updateUser({ password: newPassword });
+      if (error) throw new Error(error.message);
     },
 
     async profile() {
@@ -107,7 +124,7 @@ const Recorda = {
     },
 
     async list() { // every business this user belongs to
-      return unwrap(await sb.from('businesses').select('id, name, type').order('created_at'));
+      return unwrap(await sb.from('businesses').select('id, name, type, logo_url').order('created_at'));
     },
     switchTo(id) {
       localStorage.setItem(BIZ_KEY, id);
@@ -124,10 +141,46 @@ const Recorda = {
       return unwrap(await sb.from('businesses').update(fields).eq('id', id).select().single());
     },
 
+    // settings.html → Logo. Stored in the public product-images bucket under <business_id>/
+    async uploadLogo(file) {
+      if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.');
+      if (file.size > 2 * 1024 * 1024) throw new Error('Logo must be under 2 MB.');
+      const id = await Recorda.business.currentId();
+      const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+      const path = `${id}/logo-${Date.now()}.${ext}`;
+      const { error } = await sb.storage.from('product-images').upload(path, file, { upsert: true });
+      if (error) throw new Error(friendly(error.message));
+      const url = sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+      await Recorda.business.update({ logo_url: url });
+      return url;
+    },
+    async updatePrefs(prefs) { // { low_stock: true, overdue: false }
+      return Recorda.business.update({ notification_prefs: prefs });
+    },
+    // dashboard load: creates overdue alerts
+    async refreshAlerts() {
+      const id = await Recorda.business.currentId();
+      await sb.rpc('refresh_alerts', { p_business: id });
+    },
+
     // settings.html → Team
     async team() {
       const id = await Recorda.business.currentId();
-      return unwrap(await sb.from('business_members').select('user_id, role').eq('business_id', id));
+      return unwrap(await sb.rpc('team_members', { p_business: id }));
+    },
+    async setRole(userId, role) {
+      const id = await Recorda.business.currentId();
+      return unwrap(await sb.from('business_members').update({ role }).eq('business_id', id).eq('user_id', userId));
+    },
+    async removeMember(userId) {
+      const id = await Recorda.business.currentId();
+      return unwrap(await sb.from('business_members').delete().eq('business_id', id).eq('user_id', userId));
+    },
+    async myRole() {
+      const id = await Recorda.business.currentId();
+      const u = await Recorda.auth.user();
+      const rows = unwrap(await sb.from('business_members').select('role').eq('business_id', id).eq('user_id', u.id));
+      return rows[0]?.role || null;
     },
     async addMember(email, role = 'staff') {
       const id = await Recorda.business.currentId();
@@ -170,6 +223,15 @@ const Recorda = {
     async get(customerId) { // customer-profile.html
       return unwrap(await sb.from('customers').select('*').eq('id', customerId).single());
     },
+    async update(customerId, fields) {
+      return unwrap(await sb.from('customers').update(fields).eq('id', customerId).select().single());
+    },
+    async remove(customerId) {
+      return unwrap(await sb.from('customers').delete().eq('id', customerId));
+    },
+    async payments(customerId) {
+      return unwrap(await sb.from('payments').select('*').eq('customer_id', customerId).order('payment_date', { ascending: false }));
+    },
     async sales(customerId) {
       return unwrap(await sb.from('sales').select('*, sale_items(*)')
         .eq('customer_id', customerId).order('sale_date', { ascending: false }));
@@ -201,6 +263,16 @@ const Recorda = {
     },
     async update(productId, fields) {
       return unwrap(await sb.from('products').update(fields).eq('id', productId).select().single());
+    },
+    // product-details.html → Sales tab
+    async salesOf(productId) {
+      return unwrap(await sb.from('sale_items')
+        .select('quantity, unit_price, line_total, sales(id, sale_date, receipt_no, customers(name))')
+        .eq('product_id', productId).order('id', { ascending: false }).limit(100));
+    },
+    async addStock(productId, qty) {
+      const p = await Recorda.products.get(productId);
+      return Recorda.products.update(productId, { quantity: p.quantity + qty });
     },
     async remove(productId) {
       return unwrap(await sb.from('products').delete().eq('id', productId));
@@ -244,6 +316,12 @@ const Recorda = {
       if (to) q = q.lte('expense_date', to);
       return unwrap(await q);
     },
+    async get(expenseId) {
+      return unwrap(await sb.from('expenses').select('*').eq('id', expenseId).single());
+    },
+    async remove(expenseId) {
+      return unwrap(await sb.from('expenses').delete().eq('id', expenseId));
+    },
     // new-expense.html
     async add({ amount, category, description, method, date }) {
       const id = await Recorda.business.currentId();
@@ -284,6 +362,12 @@ const Recorda = {
     },
   },
 
+  payments: {
+    async get(paymentId) {
+      return unwrap(await sb.from('payments').select('*, customers(name, phone)').eq('id', paymentId).single());
+    },
+  },
+
   dashboard: {
     // dashboard.html / reports.html. from & to are 'YYYY-MM-DD'
     async summary(from, to) {
@@ -311,6 +395,19 @@ const Recorda = {
       return unwrap(await sb.from('record_types')
         .insert({ business_id: id, name, description, fields: withKeys }).select().single());
     },
+    async getType(typeId) {
+      return unwrap(await sb.from('record_types').select('*').eq('id', typeId).single());
+    },
+    async counts() { // { typeId: numberOfEntries }
+      const id = await Recorda.business.currentId();
+      const rows = unwrap(await sb.from('record_entries').select('record_type_id').eq('business_id', id));
+      const out = {};
+      rows.forEach(r => { out[r.record_type_id] = (out[r.record_type_id] || 0) + 1; });
+      return out;
+    },
+    async removeType(typeId) {
+      return unwrap(await sb.from('record_types').delete().eq('id', typeId));
+    },
     async entries(typeId) { // custom-record-list.html
       return unwrap(await sb.from('record_entries').select('*')
         .eq('record_type_id', typeId).order('created_at', { ascending: false }));
@@ -336,6 +433,13 @@ const Recorda = {
       return unwrap(await sb.from('notifications').select('*')
         .eq('business_id', id).order('created_at', { ascending: false }).limit(50));
     },
+    async unreadCount() {
+      const id = await Recorda.business.currentId();
+      const { count, error } = await sb.from('notifications').select('id', { count: 'exact', head: true })
+        .eq('business_id', id).eq('is_read', false);
+      if (error) throw new Error(error.message);
+      return count || 0;
+    },
     async markAllRead() { // markAllRead() on notifications.html
       const id = await Recorda.business.currentId();
       return unwrap(await sb.from('notifications').update({ is_read: true })
@@ -360,6 +464,17 @@ const Recorda = {
     prettyDate(d) {
       return d ? new Date(d + 'T00:00:00').toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
     },
+    // Download rows (array of objects) as a CSV file
+    downloadCSV(filename, rows) {
+      if (!rows.length) return;
+      const cols = Object.keys(rows[0]);
+      const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const csv = [cols.join(','), ...rows.map(r => cols.map(c => q(r[c])).join(','))].join('\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = filename; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    },
     naira(n) {
       return '₦' + Number(n || 0).toLocaleString('en-NG', { maximumFractionDigits: 2 });
     },
@@ -374,6 +489,28 @@ const Recorda = {
     },
   },
 };
+
+// ---------- Error reporting (feeds the developer site) ----------
+let _errCount = 0;
+Recorda.reportError = async function (message, stack) {
+  try {
+    if (_errCount >= 5) return;                       // max 5 per page load
+    message = String(message || '').slice(0, 900);
+    if (!message || /ResizeObserver|Script error|Not signed in|No business yet/i.test(message)) return;
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    _errCount++;
+    await sb.from('app_errors').insert({
+      page: location.pathname.slice(0, 200), message,
+      stack: String(stack || '').slice(0, 3900),
+      business_id: localStorage.getItem(BIZ_KEY) || null,
+      user_agent: navigator.userAgent.slice(0, 380),
+    });
+  } catch (_) { /* never let error reporting cause errors */ }
+};
+window.addEventListener('error', e => Recorda.reportError(e.message, e.error && e.error.stack));
+window.addEventListener('unhandledrejection', e =>
+  Recorda.reportError(e.reason && e.reason.message ? e.reason.message : e.reason, e.reason && e.reason.stack));
 
 window.Recorda = Recorda;
 

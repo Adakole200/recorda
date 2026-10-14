@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transaction Detail — Recorda</title>
@@ -9,7 +15,7 @@
   .form-page{ max-width:520px; margin:0 auto; }
   .back-link{ display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; color:var(--ink-soft); margin-bottom:16px; }
   .td-amount{ text-align:center; padding:22px 0 10px; }
-  .td-amount .num{ font-size:32px; font-weight:800; color:var(--accent-deep); }
+  .td-amount .num{ font-size:32px; font-weight:800; color:var(--ok-deep); }
   .detail-row{ display:flex; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); font-size:14px; }
   .detail-row:last-child{ border-bottom:none; }
   .detail-row .label{ color:var(--ink-soft); }
@@ -19,7 +25,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -38,30 +44,8 @@
     <div class="page">
       <div class="form-page">
         <a href="transactions.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Transactions</a>
-
-        <div class="card card-pad">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="badge badge-green">Sale</span>
-            <span class="badge badge-green">Paid</span>
-          </div>
-          <div class="td-amount">
-            <div class="num">+₦35,000</div>
-            <div class="text-soft text-sm mt-2">2 × Native Shirt</div>
-          </div>
-
-          <div style="border-top:1px solid var(--line); margin-top:10px;">
-            <div class="detail-row"><span class="label">Customer</span><span class="value">Musa Ibrahim</span></div>
-            <div class="detail-row"><span class="label">Date</span><span class="value">Aug 24, 2026 · 10:24am</span></div>
-            <div class="detail-row"><span class="label">Payment method</span><span class="value">Cash</span></div>
-            <div class="detail-row"><span class="label">Amount paid</span><span class="value num">₦35,000</span></div>
-            <div class="detail-row"><span class="label">Balance</span><span class="value num">₦0</span></div>
-          </div>
-        </div>
-
-        <div class="flex gap-3 mt-4">
-          <button class="btn btn-secondary btn-block" onclick="location.href='receipt.html'">View Receipt</button>
-          <button class="btn btn-primary btn-block" onclick="location.href='receipt.html'">Share on WhatsApp</button>
-        </div>
+        <div class="card card-pad" id="tdCard"><p class="text-soft">Loading…</p></div>
+        <div class="flex gap-3 mt-4" id="tdActions"></div>
       </div>
     </div>
   </div>
@@ -71,5 +55,67 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const N = n => Recorda.util.naira(n);
+const E = Recorda.util.esc;
+const row = (l, v) => `<div class="detail-row"><span class="label">${l}</span><span class="value">${v}</span></div>`;
+document.addEventListener('DOMContentLoaded', async () => {
+  const p = new URLSearchParams(location.search);
+  const kind = p.get('kind') || 'sale', id = p.get('id');
+  const card = document.getElementById('tdCard'), actions = document.getElementById('tdActions');
+  if (!id) { card.innerHTML = '<p class="text-soft">No transaction selected.</p>'; return; }
+  try {
+    if (kind === 'sale') {
+      const s = await Recorda.sales.get(id);
+      const bal = Number(s.total) - Number(s.amount_paid);
+      const items = (s.sale_items || []).map(i => `${i.quantity} × ${E(i.product_name)}`).join(', ');
+      const st = s.status === 'paid' ? ['badge-green', 'Paid'] : s.status === 'partial' ? ['badge-amber', 'Partially paid'] : ['badge-red', 'Unpaid'];
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span class="badge badge-green">Sale</span><span class="badge ${st[0]}">${st[1]}</span></div>
+        <div class="td-amount"><div class="num">+${N(s.total)}</div><div class="text-soft text-sm mt-2">${items}</div></div>
+        <div style="border-top:1px solid var(--line); margin-top:10px;">
+          ${row('Receipt', '#' + String(s.receipt_no || 0).padStart(5, '0'))}
+          ${row('Customer', s.customers ? E(s.customers.name) : 'Walk-in customer')}
+          ${row('Date', Recorda.util.prettyDate(s.sale_date))}
+          ${row('Payment method', E(s.payment_method || '—'))}
+          ${s.discount > 0 ? row('Discount', '<span class="num">' + N(s.discount) + '</span>') : ''}
+          ${row('Amount paid', '<span class="num">' + N(s.amount_paid) + '</span>')}
+          ${row('Balance', '<span class="num">' + N(bal) + '</span>')}
+          ${s.due_date && bal > 0 ? row('Due date', Recorda.util.prettyDate(s.due_date)) : ''}
+        </div>`;
+      actions.innerHTML = `<button class="btn btn-secondary btn-block" onclick="location.href='receipt.html?id=${s.id}'">View Receipt</button>
+        <button class="btn btn-primary btn-block" onclick="location.href='receipt.html?id=${s.id}'">Share on WhatsApp</button>`;
+    } else if (kind === 'expense') {
+      const x = await Recorda.expenses.get(id);
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span class="badge badge-amber">Expense</span><span class="badge badge-neutral">${E(x.category || 'Other')}</span></div>
+        <div class="td-amount"><div class="num">-${N(x.amount)}</div><div class="text-soft text-sm mt-2">${E(x.description || x.category || '')}</div></div>
+        <div style="border-top:1px solid var(--line); margin-top:10px;">
+          ${row('Category', E(x.category || '—'))}
+          ${row('Date', Recorda.util.prettyDate(x.expense_date))}
+          ${row('Payment method', E(x.payment_method || '—'))}
+        </div>`;
+      actions.innerHTML = `<button class="btn btn-danger btn-block" onclick="deleteExpense('${x.id}')">Delete expense</button>`;
+    } else {
+      const x = await Recorda.payments.get(id);
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;"><span class="badge badge-blue">Payment</span><span class="badge badge-green">Received</span></div>
+        <div class="td-amount"><div class="num">+${N(x.amount)}</div><div class="text-soft text-sm mt-2">Debt repayment</div></div>
+        <div style="border-top:1px solid var(--line); margin-top:10px;">
+          ${row('Customer', x.customers ? E(x.customers.name) : '—')}
+          ${row('Date', Recorda.util.prettyDate(x.payment_date))}
+          ${row('Payment method', E(x.payment_method || '—'))}
+        </div>`;
+      actions.innerHTML = x.customer_id ? `<button class="btn btn-secondary btn-block" onclick="location.href='customer-profile.html?id=${x.customer_id}'">View customer</button>` : '';
+    }
+  } catch (err) { card.innerHTML = `<p class="text-soft">${E(err.message)}</p>`; }
+});
+async function deleteExpense(id) {
+  if (!confirm('Delete this expense? This cannot be undone.')) return;
+  try { await Recorda.expenses.remove(id); location.href = 'transactions.html'; } catch (err) { showToast(err.message); }
+}
+
+</script>
 </body>
 </html>

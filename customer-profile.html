@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Musa Ibrahim — Recorda</title>
@@ -20,7 +26,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -38,67 +44,50 @@
   <div class="main-col">
     <div class="page">
       <a href="customers.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Customers</a>
-
       <div class="profile-head">
-        <div class="profile-avatar">MI</div>
-        <div>
-          <h1 style="font-size:21px;font-weight:800;">Musa Ibrahim</h1>
-          <div class="text-soft text-sm">0803 456 7821</div>
-        </div>
+        <div class="profile-avatar" id="cpAvatar">··</div>
+        <div><h1 style="font-size:21px;font-weight:800;" id="cpName">Loading…</h1><div class="text-soft text-sm" id="cpPhone"></div></div>
         <div class="profile-actions">
-          <button class="btn btn-secondary btn-sm">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011.1-.2c1.2.4 2.5.6 3.8.6a1 1 0 011 1V20a1 1 0 01-1 1C10.6 21 3 13.4 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.3.2 2.6.6 3.8a1 1 0 01-.3 1.1l-2.2 2.2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
-            Call
-          </button>
-          <button class="btn btn-secondary btn-sm">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="color:#1E8E3E;"><path d="M17.5 3.5a4 4 0 11-3 6.6L8 14a4 4 0 11-1.4-2.6l6.5-3.9a4 4 0 013.4-3.6z" stroke="currentColor" stroke-width="1.5"/></svg>
-            WhatsApp
-          </button>
-          <button class="btn btn-primary btn-sm" onclick="openOverlay('recordPayment')">Record Payment</button>
+          <a class="btn btn-secondary btn-sm" id="cpCall" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011.1-.2c1.2.4 2.5.6 3.8.6a1 1 0 011 1V20a1 1 0 01-1 1C10.6 21 3 13.4 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.3.2 2.6.6 3.8a1 1 0 01-.3 1.1l-2.2 2.2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg> Call</a>
+          <a class="btn btn-secondary btn-sm" id="cpWa" href="#" target="_blank"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="color:#1E8E3E;"><path d="M17.5 3.5a4 4 0 11-3 6.6L8 14a4 4 0 11-1.4-2.6l6.5-3.9a4 4 0 013.4-3.6z" stroke="currentColor" stroke-width="1.5"/></svg> WhatsApp</a>
+          <button class="btn btn-primary btn-sm" onclick="openPay()">Record Payment</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEdit()">Edit</button>
         </div>
       </div>
-
       <div class="summary-grid">
-        <div class="card stat-card">
-          <div class="stat-label">Total purchases</div>
-          <div class="ledger-figure"><div class="stat-value num" style="font-size:22px;">₦185,000</div></div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-label">Amount paid</div>
-          <div class="ledger-figure"><div class="stat-value num" style="font-size:22px;color:var(--accent-deep);">₦160,000</div></div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-label">Outstanding</div>
-          <div class="ledger-figure"><div class="stat-value num" style="font-size:22px;color:var(--amber);">₦25,000</div></div>
-        </div>
+        <div class="card stat-card"><div class="stat-label">Total purchases</div><div class="ledger-figure"><div class="stat-value num" style="font-size:22px;" id="cpTotal">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Amount paid</div><div class="ledger-figure"><div class="stat-value num" style="font-size:22px;color:var(--ok-deep);" id="cpPaid">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Outstanding</div><div class="ledger-figure"><div class="stat-value num" style="font-size:22px;color:var(--amber);" id="cpOwed">₦0</div></div></div>
       </div>
-
       <div class="tabs">
-        <div class="tab active">Overview</div>
-        <div class="tab">Transactions</div>
-        <div class="tab">Payments</div>
+        <div class="tab active" style="cursor:pointer;" onclick="cpTab('sales', this)">Purchases</div>
+        <div class="tab" style="cursor:pointer;" onclick="cpTab('payments', this)">Payments</div>
+        <div class="tab" style="cursor:pointer;" onclick="cpTab('info', this)">Details</div>
       </div>
+      <div class="card"><div class="card-pad" style="padding-bottom:8px;" id="cpBody"></div></div>
+      <div style="margin-top:22px;"><button class="btn btn-danger btn-sm" onclick="deleteCustomer()">Delete customer</button></div>
 
-      <div class="card">
-        <div class="card-pad" style="padding-bottom:8px;">
-          <div class="activity-row">
-            <div class="act-icon" style="background:var(--red-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--red);"><path d="M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div class="act-body"><div class="act-title">Native shirt (credit)</div><div class="act-sub">Aug 21 · Balance ₦25,000</div></div>
-            <div class="act-amount plus num">+₦25,000</div>
-          </div>
-          <div class="activity-row">
-            <div class="act-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="act-body"><div class="act-title">2 shirts</div><div class="act-sub">Aug 24 · Cash · Paid in full</div></div>
-            <div class="act-amount plus num">+₦35,000</div>
-          </div>
-          <div class="activity-row">
-            <div class="act-icon" style="background:var(--blue-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--blue);"><path d="M12 8v5m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-            <div class="act-body"><div class="act-title">Payment received</div><div class="act-sub">Aug 10 · Bank Transfer</div></div>
-            <div class="act-amount plus num">+₦50,000</div>
-          </div>
+      <div class="overlay" id="payOverlay"><div class="sheet">
+        <div class="sheet-head"><h3>Record Payment</h3><button class="close-x" onclick="closeOverlay('payOverlay')">✕</button></div>
+        <div class="sheet-body">
+          <p class="text-soft text-sm" id="payWho" style="margin-bottom:14px;"></p>
+          <div class="field"><label>Amount received</label><input type="number" id="payAmount" placeholder="₦0.00"></div>
+          <div class="field"><label>Payment method</label><select id="payMethod"><option>Cash</option><option>Bank Transfer</option><option>POS</option><option>USSD</option></select></div>
+          <div class="field"><label>Date</label><input type="date" id="payDate"></div>
         </div>
-      </div>
+        <div class="sheet-foot"><button class="btn btn-primary btn-block" id="payBtn" onclick="submitPayment()">Save Payment</button></div>
+      </div></div>
 
+      <div class="overlay" id="editOverlay"><div class="sheet">
+        <div class="sheet-head"><h3>Edit Customer</h3><button class="close-x" onclick="closeOverlay('editOverlay')">✕</button></div>
+        <div class="sheet-body">
+          <div class="field"><label>Full name</label><input type="text" id="eName"></div>
+          <div class="field"><label>Phone number</label><input type="tel" id="ePhone"></div>
+          <div class="field"><label>Address</label><input type="text" id="eAddr"></div>
+          <div class="field"><label>Notes</label><textarea id="eNotes"></textarea></div>
+        </div>
+        <div class="sheet-foot"><button class="btn btn-primary btn-block" onclick="saveEdit()">Save Changes</button></div>
+      </div></div>
     </div>
   </div>
 </div>
@@ -111,29 +100,105 @@
   <a href="more.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>More</a>
 </nav>
 
-<div class="overlay" id="recordPayment">
-  <div class="sheet">
-    <div class="sheet-head"><h3>Record Payment</h3><button class="close-x" onclick="closeOverlay('recordPayment')">✕</button></div>
-    <div class="sheet-body">
-      <div class="field">
-        <label>Amount</label>
-        <input type="number" placeholder="₦0.00" value="25000">
-        <div class="hint">Outstanding balance: ₦25,000</div>
-      </div>
-      <div class="field">
-        <label>Payment method</label>
-        <select><option>Cash</option><option>Bank Transfer</option><option>POS</option><option>USSD</option><option>Mobile Money</option></select>
-      </div>
-      <div class="field"><label>Date</label><input type="date"></div>
-    </div>
-    <div class="sheet-foot"><button class="btn btn-primary btn-block" onclick="closeOverlay('recordPayment'); showToast('Payment recorded ✓')">Save Payment</button></div>
-  </div>
-</div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const N = n => Recorda.util.naira(n);
+const E = Recorda.util.esc;
+const cid = new URLSearchParams(location.search).get('id');
+let cust = null, sales = [], pays = [], tab = 'sales';
+
+async function loadCustomer() {
+  if (!cid) { document.getElementById('cpName').textContent = 'No customer selected'; return; }
+  try {
+    [cust, sales, pays] = await Promise.all([Recorda.customers.get(cid), Recorda.customers.sales(cid), Recorda.customers.payments(cid)]);
+  } catch (err) { showToast(err.message); return; }
+  document.getElementById('cpAvatar').textContent = Recorda.util.initials(cust.name);
+  document.getElementById('cpName').textContent = cust.name;
+  document.getElementById('cpPhone').textContent = cust.phone || 'No phone number';
+  document.getElementById('cpCall').href = cust.phone ? 'tel:' + cust.phone : '#';
+  document.getElementById('cpWa').href = cust.phone ? Recorda.util.whatsappLink(cust.phone, `Hello ${cust.name}, `) : '#';
+  const total = sales.reduce((t, x) => t + Number(x.total), 0);
+  const paid = sales.reduce((t, x) => t + Number(x.amount_paid), 0);
+  document.getElementById('cpTotal').textContent = N(total);
+  document.getElementById('cpPaid').textContent = N(paid);
+  document.getElementById('cpOwed').textContent = N(total - paid);
+  renderTab();
+}
+function cpTab(t, el) {
+  tab = t;
+  document.querySelectorAll('.tabs .tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  renderTab();
+}
+function renderTab() {
+  const box = document.getElementById('cpBody');
+  const icon = c => `<div class="act-icon" style="background:${c};"></div>`;
+  if (tab === 'sales') {
+    box.innerHTML = sales.length ? sales.map(x => {
+      const bal = Number(x.total) - Number(x.amount_paid);
+      const items = (x.sale_items || []).map(i => `${i.quantity} × ${E(i.product_name)}`).join(', ');
+      return `<div class="activity-row" style="cursor:pointer;" onclick="location.href='transaction-detail.html?kind=sale&id=${x.id}'">
+        ${icon(bal > 0 ? 'var(--red-tint)' : 'var(--ok-tint)')}
+        <div class="act-body"><div class="act-title">${items || 'Sale'}</div><div class="act-sub">${Recorda.util.prettyDate(x.sale_date)}${bal > 0 ? ' · Balance ' + N(bal) : ' · Paid'}</div></div>
+        <div class="act-amount plus num">${N(x.total)}</div></div>`;
+    }).join('') : '<p class="text-soft text-sm" style="padding:10px 0;">No purchases yet.</p>';
+  } else if (tab === 'payments') {
+    box.innerHTML = pays.length ? pays.map(x => `<div class="activity-row" style="cursor:pointer;" onclick="location.href='transaction-detail.html?kind=payment&id=${x.id}'">
+      ${icon('var(--blue-tint)')}
+      <div class="act-body"><div class="act-title">Payment received</div><div class="act-sub">${Recorda.util.prettyDate(x.payment_date)} · ${E(x.payment_method || '')}</div></div>
+      <div class="act-amount plus num">+${N(x.amount)}</div></div>`).join('') : '<p class="text-soft text-sm" style="padding:10px 0;">No payments recorded.</p>';
+  } else {
+    box.innerHTML = `<div class="detail-row"><span class="label">Phone</span><span class="value">${E(cust?.phone || '—')}</span></div>
+      <div class="detail-row"><span class="label">Address</span><span class="value">${E(cust?.address || '—')}</span></div>
+      <div class="detail-row"><span class="label">Notes</span><span class="value">${E(cust?.notes || '—')}</span></div>
+      <div class="detail-row"><span class="label">Customer since</span><span class="value">${Recorda.util.prettyDate((cust?.created_at || '').slice(0, 10))}</span></div>`;
+  }
+}
+function openPay() {
+  const owed = sales.reduce((t, x) => t + Number(x.total) - Number(x.amount_paid), 0);
+  document.getElementById('payWho').textContent = `${cust.name} owes ${N(owed)}`;
+  document.getElementById('payAmount').value = owed > 0 ? owed : '';
+  document.getElementById('payDate').value = new Date().toISOString().slice(0, 10);
+  openOverlay('payOverlay');
+}
+async function submitPayment() {
+  const amount = Number(document.getElementById('payAmount').value);
+  if (!(amount > 0)) { showToast('Enter the amount received'); return; }
+  const btn = document.getElementById('payBtn'); btn.disabled = true;
+  try {
+    await Recorda.debts.recordPayment({ customerId: cid, amount, method: document.getElementById('payMethod').value, date: document.getElementById('payDate').value || undefined });
+    closeOverlay('payOverlay'); showToast('Payment recorded ✓'); await loadCustomer();
+  } catch (err) { showToast(err.message); }
+  btn.disabled = false;
+}
+function openEdit() {
+  document.getElementById('eName').value = cust.name || '';
+  document.getElementById('ePhone').value = cust.phone || '';
+  document.getElementById('eAddr').value = cust.address || '';
+  document.getElementById('eNotes').value = cust.notes || '';
+  openOverlay('editOverlay');
+}
+async function saveEdit() {
+  const name = document.getElementById('eName').value.trim();
+  if (!name) { showToast('Name is required'); return; }
+  try {
+    await Recorda.customers.update(cid, { name, phone: document.getElementById('ePhone').value.trim() || null, address: document.getElementById('eAddr').value.trim() || null, notes: document.getElementById('eNotes').value.trim() || null });
+    closeOverlay('editOverlay'); showToast('Customer updated ✓'); await loadCustomer();
+  } catch (err) { showToast(err.message); }
+}
+async function deleteCustomer() {
+  if (!confirm(`Delete ${cust.name}? Their past sales stay in your records as walk-in sales.`)) return;
+  try { await Recorda.customers.remove(cid); location.href = 'customers.html'; } catch (err) { showToast(err.message); }
+}
+document.addEventListener('DOMContentLoaded', loadCustomer);
+
+</script>
 </body>
 </html>

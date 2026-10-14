@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Expenses — Recorda</title>
@@ -18,7 +24,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -42,49 +48,25 @@
           Record Expense
         </button>
       </div>
-
       <div class="toolbar">
         <div class="period-tabs" style="background:var(--paper-raised); border:1px solid var(--line);">
-          <button class="period-tab active">Month</button>
-          <button class="period-tab">Week</button>
-          <button class="period-tab">Year</button>
+          <button class="period-tab" onclick="setExpPeriod('week', this)">Week</button>
+          <button class="period-tab active" onclick="setExpPeriod('month', this)">Month</button>
+          <button class="period-tab" onclick="setExpPeriod('year', this)">Year</button>
         </div>
       </div>
-
       <div class="card exp-total mb-4">
-        <div class="stat-label">Total expenses this month</div>
-        <div class="ledger-figure"><div class="stat-value num" style="font-size:30px;">₦125,000</div></div>
+        <div class="stat-label" id="expLabel">Total expenses this month</div>
+        <div class="ledger-figure"><div class="stat-value num" style="font-size:30px;" id="expTotal">₦0</div></div>
       </div>
-
-      <div class="card card-pad">
+      <div class="card card-pad mb-4">
         <div class="section-title" style="margin-bottom:4px;"><h2>By category</h2></div>
-        <div class="cat-row">
-          <div class="cat-name">Supplies</div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:36%;"></div></div>
-          <div class="cat-amount num">₦45,000</div>
-        </div>
-        <div class="cat-row">
-          <div class="cat-name">Transport</div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:20%;"></div></div>
-          <div class="cat-amount num">₦25,000</div>
-        </div>
-        <div class="cat-row">
-          <div class="cat-name">Rent</div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:16%;"></div></div>
-          <div class="cat-amount num">₦20,000</div>
-        </div>
-        <div class="cat-row">
-          <div class="cat-name">Electricity</div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:12%;"></div></div>
-          <div class="cat-amount num">₦15,000</div>
-        </div>
-        <div class="cat-row">
-          <div class="cat-name">Other</div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:16%;"></div></div>
-          <div class="cat-amount num">₦20,000</div>
-        </div>
+        <div id="expCats"></div>
       </div>
-
+      <div class="card card-pad">
+        <div class="section-title" style="margin-bottom:4px;"><h2>All expenses</h2></div>
+        <div id="expList"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -100,5 +82,45 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const N = n => Recorda.util.naira(n);
+const E = Recorda.util.esc;
+let expPeriod = 'month';
+const isoLocal = d => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+function periodRange(p) {
+  const now = new Date(), to = isoLocal(now);
+  if (p === 'week') { const d = new Date(now); d.setDate(now.getDate() - 6); return [isoLocal(d), to]; }
+  if (p === 'year') return [isoLocal(new Date(now.getFullYear(), 0, 1)), to];
+  return [isoLocal(new Date(now.getFullYear(), now.getMonth(), 1)), to];
+}
+function setExpPeriod(p, btn) {
+  expPeriod = p;
+  document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadExpenses();
+}
+async function loadExpenses() {
+  const [from, to] = periodRange(expPeriod);
+  let rows = [];
+  try { rows = await Recorda.expenses.list(from, to); } catch (err) { showToast(err.message); }
+  const total = rows.reduce((t, r) => t + Number(r.amount), 0);
+  document.getElementById('expLabel').textContent = 'Total expenses this ' + expPeriod;
+  document.getElementById('expTotal').textContent = N(total);
+  const byCat = {};
+  rows.forEach(r => { const c = r.category || 'Other'; byCat[c] = (byCat[c] || 0) + Number(r.amount); });
+  const cats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
+  document.getElementById('expCats').innerHTML = cats.length ? cats.map(([c, v]) => `
+    <div class="cat-row"><div class="cat-name">${E(c)}</div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.max(3, v / total * 100)}%;"></div></div>
+      <div class="cat-amount num">${N(v)}</div></div>`).join('') : '<p class="text-soft text-sm" style="padding:12px 0;">No expenses in this period.</p>';
+  document.getElementById('expList').innerHTML = rows.length ? rows.map(r => `
+    <div class="activity-row" style="cursor:pointer;" onclick="location.href='transaction-detail.html?kind=expense&id=${r.id}'">
+      <div class="act-body"><div class="act-title">${E(r.description || r.category || 'Expense')}</div><div class="act-sub">${E(r.category || 'Other')} · ${Recorda.util.prettyDate(r.expense_date)}${r.payment_method ? ' · ' + E(r.payment_method) : ''}</div></div>
+      <div class="act-amount minus num">-${N(r.amount)}</div></div>`).join('') : '<p class="text-soft text-sm" style="padding:12px 0;">Nothing recorded yet.</p>';
+}
+document.addEventListener('DOMContentLoaded', loadExpenses);
+
+</script>
 </body>
 </html>

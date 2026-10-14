@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create Record Type — Recorda</title>
@@ -14,6 +20,7 @@
   }
   .drag-handle{ color:var(--ink-faint); cursor:grab; flex-shrink:0; }
   .drag-handle svg{ width:16px;height:16px; }
+  .field-row{ flex-wrap:wrap; }
   .field-row input[type=text]{ flex:1; min-height:38px; padding:8px 10px; }
   .field-row select{ width:140px; min-height:38px; padding:8px 10px; flex-shrink:0; }
   .field-remove{ width:32px;height:32px;border-radius:8px; color:var(--ink-faint); display:flex;align-items:center;justify-content:center; flex-shrink:0; }
@@ -24,7 +31,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -75,7 +82,7 @@
           </div>
           <div class="flex gap-3 mt-4">
             <button class="btn btn-secondary btn-block" onclick="location.href='records.html'">Back to Records</button>
-            <button class="btn btn-primary btn-block" onclick="location.href='custom-record-list.html'">Add first entry</button>
+            <button class="btn btn-primary btn-block" onclick="location.href='custom-record-list.html?id=' + sessionStorage.getItem('recorda.lastType')">Add first entry</button>
           </div>
         </div>
 
@@ -99,7 +106,8 @@
       <div class="field-row" data-id="${fieldCount}">
         <div class="drag-handle"><svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="6" r="1.4" fill="currentColor"/><circle cx="8" cy="12" r="1.4" fill="currentColor"/><circle cx="8" cy="18" r="1.4" fill="currentColor"/><circle cx="16" cy="6" r="1.4" fill="currentColor"/><circle cx="16" cy="12" r="1.4" fill="currentColor"/><circle cx="16" cy="18" r="1.4" fill="currentColor"/></svg></div>
         <input type="text" value="${name}" placeholder="Field name">
-        <select>${opts}</select>
+        <select onchange="this.closest('.field-row').querySelector('.opt-input').style.display = this.value === 'Dropdown' ? 'block' : 'none'">${opts}</select>
+        <input type="text" class="opt-input" placeholder="Dropdown options, separated by commas (e.g. Active, Maintenance, Retired)" style="display:${type === 'Dropdown' ? 'block' : 'none'}; flex:1 1 100%; order:9;">
         <button type="button" class="field-remove" onclick="this.closest('.field-row').remove()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M7 7l10 10M7 17L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
@@ -121,7 +129,7 @@
     const name = document.getElementById('typeName').value.trim();
     if (!name) { showToast('Give your record type a name'); return; }
     const fields = [...document.querySelectorAll('#fieldList .field-row')]
-      .map(r => ({ label: r.querySelector('input').value.trim(), type: r.querySelector('select').value }))
+      .map(r => ({ label: r.querySelector('input').value.trim(), type: r.querySelector('select').value, options: (r.querySelector('.opt-input')?.value || '').split(',').map(x => x.trim()).filter(Boolean) }))
       .filter(f => f.label);
     if (!fields.length) { showToast('Add at least one field'); return; }
     try {

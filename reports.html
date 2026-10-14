@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reports — Recorda</title>
@@ -16,11 +22,12 @@
   .export-row{ display:flex; gap:10px; }
   @media (max-width:900px){ .report-grid{ grid-template-columns:1fr; } }
 </style>
+<style>.rp-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}.rp-row:last-child{border-bottom:none}@media print{.sidebar,.bottom-nav,.page-head select,.page-head input,button{display:none !important}.main-col{margin:0 !important}}@media (max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr) !important}}</style>
 </head>
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -38,66 +45,32 @@
   <div class="main-col">
     <div class="page">
       <div class="page-head">
-        <div><h1>Reports</h1><div class="sub">Understand your business at a glance.</div></div>
-        <select style="max-width:160px; min-height:44px;">
-          <option>This Month</option><option>This Week</option><option>This Year</option><option>Custom</option>
-        </select>
-      </div>
-
-      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:26px;">
-        <div class="card stat-card"><div class="stat-label">Income</div><div class="ledger-figure"><div class="stat-value income num">₦420,500</div></div></div>
-        <div class="card stat-card"><div class="stat-label">Expenses</div><div class="ledger-figure"><div class="stat-value expense num">₦125,000</div></div></div>
-        <div class="card stat-card"><div class="stat-label">Profit</div><div class="ledger-figure"><div class="stat-value profit num">₦295,500</div></div></div>
-      </div>
-
-      <div class="section-block">
-        <div class="section-title"><h2>Report types</h2></div>
-        <div class="report-grid">
-          <a href="#" class="card report-card">
-            <div class="report-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div><div class="report-title">Profit & Loss</div><div class="report-sub">Full income and expense breakdown</div></div>
-          </a>
-          <a href="#" class="card report-card">
-            <div class="report-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div><div class="report-title">Sales Report</div><div class="report-sub">Every sale, by product and customer</div></div>
-          </a>
-          <a href="expenses.html" class="card report-card">
-            <div class="report-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div><div class="report-title">Expense Report</div><div class="report-sub">Spending broken down by category</div></div>
-          </a>
-          <a href="debts.html" class="card report-card">
-            <div class="report-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 4h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div><div class="report-title">Debt Report</div><div class="report-sub">Who owes you and who you owe</div></div>
-          </a>
-          <a href="products.html" class="card report-card">
-            <div class="report-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-            <div><div class="report-title">Inventory Report</div><div class="report-sub">Stock levels and movement</div></div>
-          </a>
-          <a href="customers.html" class="card report-card">
-            <div class="report-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg></div>
-            <div><div class="report-title">Customer Report</div><div class="report-sub">Purchases and balances by customer</div></div>
-          </a>
+        <div><h1>Reports</h1><div class="sub" id="rpRange">Understand your business at a glance.</div></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select id="rpPeriod" style="max-width:160px; min-height:44px;" onchange="onPeriod()">
+            <option value="month">This Month</option><option value="week">This Week</option><option value="year">This Year</option><option value="custom">Custom</option>
+          </select>
+          <input type="date" id="rpFrom" style="display:none;max-width:150px;" onchange="loadReport()">
+          <input type="date" id="rpTo" style="display:none;max-width:150px;" onchange="loadReport()">
         </div>
       </div>
-
-      <div class="section-block">
-        <div class="section-title"><h2>Export</h2></div>
-        <div class="export-row">
-          <button class="btn btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
-            Export PDF
-          </button>
-          <button class="btn btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 9h8M8 13h8M8 17h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-            Export Excel
-          </button>
-          <button class="btn btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
-            Export CSV
-          </button>
-        </div>
+      <div class="stat-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:26px;">
+        <div class="card stat-card"><div class="stat-label">Income</div><div class="ledger-figure"><div class="stat-value income num" id="rpIncome">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Expenses</div><div class="ledger-figure"><div class="stat-value expense num" id="rpExpenses">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Profit</div><div class="ledger-figure"><div class="stat-value profit num" id="rpProfit">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Owed to you</div><div class="ledger-figure"><div class="stat-value owed num" id="rpOwed">₦0</div></div></div>
       </div>
-
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;">
+        <button class="btn btn-secondary btn-sm" onclick="exportSales()">Export sales (CSV)</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportExpenses()">Export expenses (CSV)</button>
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">Print / Save PDF</button>
+      </div>
+      <div class="grid-2" style="align-items:start;">
+        <div class="card card-pad"><div class="section-title" style="margin-bottom:4px;"><h2>Top products</h2></div><div id="rpProducts"></div></div>
+        <div class="card card-pad"><div class="section-title" style="margin-bottom:4px;"><h2>Top customers</h2></div><div id="rpCustomers"></div></div>
+        <div class="card card-pad"><div class="section-title" style="margin-bottom:4px;"><h2>Sales by payment method</h2></div><div id="rpMethods"></div></div>
+        <div class="card card-pad"><div class="section-title" style="margin-bottom:4px;"><h2>Expenses by category</h2></div><div id="rpCats"></div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -113,5 +86,71 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const N = n => Recorda.util.naira(n);
+const E = Recorda.util.esc;
+const isoLocal = d => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); };
+let rpSales = [], rpExp = [], rpFrom = '', rpTo = '';
+
+function rangeFor(p) {
+  const now = new Date(), to = isoLocal(now);
+  if (p === 'week') { const d = new Date(now); d.setDate(now.getDate() - 6); return [isoLocal(d), to]; }
+  if (p === 'year') return [isoLocal(new Date(now.getFullYear(), 0, 1)), to];
+  return [isoLocal(new Date(now.getFullYear(), now.getMonth(), 1)), to];
+}
+function onPeriod() {
+  const p = document.getElementById('rpPeriod').value, custom = p === 'custom';
+  document.getElementById('rpFrom').style.display = document.getElementById('rpTo').style.display = custom ? '' : 'none';
+  if (custom) { const [f, t] = rangeFor('month'); document.getElementById('rpFrom').value ||= f; document.getElementById('rpTo').value ||= t; }
+  loadReport();
+}
+function list(rows, empty) {
+  return rows.length ? rows.map(r => `<div class="rp-row"><span>${E(r[0])}</span><span class="num" style="font-weight:700;">${r[1]}</span></div>`).join('')
+                     : `<p class="text-soft text-sm" style="padding:12px 0;">${empty}</p>`;
+}
+function group(rows, keyFn, valFn) {
+  const m = {}; rows.forEach(r => { const k = keyFn(r); m[k] = (m[k] || 0) + valFn(r); });
+  return Object.entries(m).sort((a, b) => b[1] - a[1]);
+}
+async function loadReport() {
+  const p = document.getElementById('rpPeriod').value;
+  [rpFrom, rpTo] = p === 'custom' ? [document.getElementById('rpFrom').value, document.getElementById('rpTo').value] : rangeFor(p);
+  if (!rpFrom || !rpTo) return;
+  document.getElementById('rpRange').textContent = `${Recorda.util.prettyDate(rpFrom)} to ${Recorda.util.prettyDate(rpTo)}`;
+  try {
+    const id = await Recorda.business.currentId();
+    const [sales, exp, debts] = await Promise.all([
+      Recorda.sb.from('sales').select('*, customers(name), sale_items(product_name, quantity, line_total)').eq('business_id', id).gte('sale_date', rpFrom).lte('sale_date', rpTo).order('sale_date'),
+      Recorda.expenses.list(rpFrom, rpTo), Recorda.debts.list()]);
+    if (sales.error) throw new Error(sales.error.message);
+    rpSales = sales.data; rpExp = exp;
+    const income = rpSales.reduce((t, s) => t + Number(s.total), 0);
+    const spent = rpExp.reduce((t, e) => t + Number(e.amount), 0);
+    document.getElementById('rpIncome').textContent = N(income);
+    document.getElementById('rpExpenses').textContent = N(spent);
+    document.getElementById('rpProfit').textContent = N(income - spent);
+    document.getElementById('rpOwed').textContent = N(debts.reduce((t, d) => t + Number(d.balance), 0));
+    const items = rpSales.flatMap(s => s.sale_items || []);
+    document.getElementById('rpProducts').innerHTML = list(group(items, i => i.product_name, i => Number(i.line_total)).slice(0, 8).map(([k, v]) => [k, N(v)]), 'No sales in this period.');
+    document.getElementById('rpCustomers').innerHTML = list(group(rpSales.filter(s => s.customers), s => s.customers.name, s => Number(s.total)).slice(0, 8).map(([k, v]) => [k, N(v)]), 'No customer sales in this period.');
+    document.getElementById('rpMethods').innerHTML = list(group(rpSales, s => s.payment_method || 'Other', s => Number(s.total)).map(([k, v]) => [k, N(v)]), 'No sales in this period.');
+    document.getElementById('rpCats').innerHTML = list(group(rpExp, e => e.category || 'Other', e => Number(e.amount)).map(([k, v]) => [k, N(v)]), 'No expenses in this period.');
+  } catch (err) { showToast(err.message); }
+}
+function exportSales() {
+  if (!rpSales.length) { showToast('No sales to export'); return; }
+  Recorda.util.downloadCSV(`sales_${rpFrom}_to_${rpTo}.csv`, rpSales.map(s => ({
+    receipt: s.receipt_no, date: s.sale_date, customer: s.customers?.name || 'Walk-in',
+    items: (s.sale_items || []).map(i => i.quantity + 'x ' + i.product_name).join('; '),
+    discount: s.discount, total: s.total, paid: s.amount_paid, balance: Number(s.total) - Number(s.amount_paid), method: s.payment_method, status: s.status })));
+}
+function exportExpenses() {
+  if (!rpExp.length) { showToast('No expenses to export'); return; }
+  Recorda.util.downloadCSV(`expenses_${rpFrom}_to_${rpTo}.csv`, rpExp.map(e => ({ date: e.expense_date, category: e.category, description: e.description, amount: e.amount, method: e.payment_method })));
+}
+document.addEventListener('DOMContentLoaded', loadReport);
+
+</script>
 </body>
 </html>

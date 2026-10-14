@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Log in — Recorda</title>
@@ -23,7 +29,7 @@
 <body>
 <div class="auth-wrap">
   <div class="auth-card">
-    <a href="index.html" class="auth-brand"><div class="brand-mark">R</div><span>Recorda</span></a>
+    <a href="index.html" class="auth-brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <div class="card card-pad">
       <h1>Welcome back</h1>
       <p class="sub">Log in to your business records.</p>
@@ -36,7 +42,7 @@
         <div class="field">
           <label for="pw">Password</label>
           <input type="password" id="pw" placeholder="••••••••" required>
-          <a href="#" class="forgot-link">Forgot password?</a>
+          <a href="#" class="forgot-link" onclick="openOverlay('forgotOverlay'); return false;">Forgot password?</a>
         </div>
         <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Log in</button>
       </form>
@@ -50,6 +56,14 @@
     <div class="auth-foot">Don't have an account? <a href="register.html">Create one</a></div>
   </div>
 </div>
+<div class="overlay" id="forgotOverlay"><div class="sheet">
+  <div class="sheet-head"><h3>Reset password</h3><button class="close-x" onclick="closeOverlay('forgotOverlay')">✕</button></div>
+  <div class="sheet-body">
+    <p class="text-soft text-sm" style="margin-bottom:14px;">Enter your email and we'll send you a link to set a new password.</p>
+    <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="you@business.com"></div>
+  </div>
+  <div class="sheet-foot"><button class="btn btn-primary btn-block" id="forgotBtn" onclick="sendReset()">Send reset link</button></div>
+</div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="app.js"></script>
@@ -66,6 +80,14 @@ async function handleLogin(e){
     showToast(err.message.includes('Email not confirmed') ? 'Please confirm your email first, then log in.' : err.message);
     btn.disabled = false; btn.textContent = 'Log in';
   }
+}
+async function sendReset(){
+  const email = document.getElementById('forgotEmail').value.trim() || document.getElementById('id').value.trim();
+  if (!email) { showToast('Enter your email'); return; }
+  const btn = document.getElementById('forgotBtn'); btn.disabled = true;
+  try { await Recorda.auth.resetPassword(email); closeOverlay('forgotOverlay'); showToast('Check your email for the reset link'); }
+  catch (err) { showToast(err.message); }
+  btn.disabled = false;
 }
 async function handleGoogle(){
   try { await Recorda.auth.signInWithGoogle(); } catch (err) { showToast(err.message); }

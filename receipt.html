@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Receipt #RF-00284 — Recorda</title>
@@ -28,52 +34,65 @@
   .receipt-actions{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:20px; }
   @media (max-width:480px){ .receipt-actions{ grid-template-columns:repeat(2,1fr); } }
 </style>
+<style>@media print{ .receipt-actions, .back-link{ display:none !important; } body{ background:#fff; } }</style>
 </head>
 <body>
 <div class="receipt-wrap">
   <a href="dashboard.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</a>
-
-  <div class="receipt">
-    <div class="r-brand">
-      <div class="r-brand-mark">A</div>
-      <div class="r-biz">ADASH FASHION</div>
-      <div class="r-addr">Kaduna, Nigeria</div>
-    </div>
-    <div class="r-meta">Receipt #RF-00284 · 24 August 2026</div>
-    <div class="r-items">
-      <div class="r-item"><span>2 × Native Shirt</span><span class="num">₦40,000</span></div>
-      <div class="r-item"><span>1 × Trouser</span><span class="num">₦15,000</span></div>
-    </div>
-    <div class="r-totals">
-      <div class="r-row final"><span>Subtotal</span><span class="num">₦55,000</span></div>
-      <div class="r-row"><span>Paid</span><span class="num">₦45,000</span></div>
-      <div class="r-row balance"><span>Balance</span><span class="num">₦10,000</span></div>
-    </div>
-    <div class="r-thanks">Thank you for your business.</div>
-  </div>
-
-  <div class="receipt-actions">
-    <button class="btn btn-secondary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v13m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Download
-    </button>
-    <button class="btn btn-secondary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9V4h12v5M6 18h12v4H6v-4zM6 14h12" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="2" y="9" width="20" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg>
-      Print
-    </button>
-    <button class="btn btn-secondary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12a1 1 0 011-1h4l3-3v12l-3-3H5a1 1 0 01-1-1v-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
-      Share
-    </button>
-    <button class="btn btn-primary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17.5 3.5a4 4 0 11-3 6.6L8 14a4 4 0 11-1.4-2.6l6.5-3.9a4 4 0 013.4-3.6z" stroke="currentColor" stroke-width="1.6"/></svg>
-      WhatsApp
-    </button>
+  <div class="receipt" id="receipt"><p class="text-soft" style="text-align:center;padding:30px;">Loading receipt…</p></div>
+  <div class="receipt-actions" id="rActions" style="display:none;">
+    <button class="btn btn-secondary" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v13m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Save PDF</button>
+    <button class="btn btn-secondary" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9V4h12v5M6 18h12v4H6v-4zM6 14h12" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><rect x="2" y="9" width="20" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg> Print</button>
+    <button class="btn btn-secondary" onclick="shareReceipt()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12a1 1 0 011-1h4l3-3v12l-3-3H5a1 1 0 01-1-1v-4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg> Share</button>
+    <button class="btn btn-primary" onclick="whatsappReceipt()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17.5 3.5a4 4 0 11-3 6.6L8 14a4 4 0 11-1.4-2.6l6.5-3.9a4 4 0 013.4-3.6z" stroke="currentColor" stroke-width="1.6"/></svg> WhatsApp</button>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+let receiptText = '', receiptPhone = '';
+const N = n => Recorda.util.naira(n);
+document.addEventListener('DOMContentLoaded', async () => {
+  const box = document.getElementById('receipt');
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) { box.innerHTML = '<p class="text-soft" style="text-align:center;padding:30px;">No receipt selected.</p>'; return; }
+  try {
+    const [sale, biz] = await Promise.all([Recorda.sales.get(id), Recorda.business.get()]);
+    const items = sale.sale_items || [];
+    const balance = Number(sale.total) - Number(sale.amount_paid);
+    const no = String(sale.receipt_no || 0).padStart(5, '0');
+    const date = new Date(sale.sale_date + 'T00:00:00').toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' });
+    const E = Recorda.util.esc;
+    const mark = biz.logo_url
+      ? `<img src="${E(biz.logo_url)}" alt="" style="width:52px;height:52px;border-radius:12px;object-fit:cover;margin:0 auto 8px;">`
+      : `<div class="r-brand-mark">${E((biz.name || 'R')[0].toUpperCase())}</div>`;
+    box.innerHTML = `
+      <div class="r-brand">${mark}<div class="r-biz">${E(biz.name)}</div>
+        <div class="r-addr">${E([biz.address, biz.phone].filter(Boolean).join(' · '))}</div></div>
+      <div class="r-meta">Receipt #${no} · ${date}${sale.customers ? '<br>Customer: ' + E(sale.customers.name) : ''}</div>
+      <div class="r-items">${items.map(i => `<div class="r-item"><span>${i.quantity} × ${E(i.product_name)}</span><span class="num">${N(i.line_total)}</span></div>`).join('')}</div>
+      <div class="r-totals">
+        ${Number(sale.discount) > 0 ? `<div class="r-row"><span>Subtotal</span><span class="num">${N(sale.subtotal)}</span></div><div class="r-row"><span>Discount</span><span class="num">-${N(sale.discount)}</span></div>` : ''}
+        <div class="r-row final"><span>Total</span><span class="num">${N(sale.total)}</span></div>
+        <div class="r-row"><span>Paid${sale.payment_method ? ' (' + E(sale.payment_method) + ')' : ''}</span><span class="num">${N(sale.amount_paid)}</span></div>
+        ${balance > 0 ? `<div class="r-row balance"><span>Balance</span><span class="num">${N(balance)}</span></div>` : '<div class="r-row"><span>Status</span><span>Paid in full</span></div>'}
+      </div>
+      <div class="r-thanks">${E(biz.receipt_footer || 'Thank you for your business.')}</div>`;
+    receiptPhone = sale.customers?.phone || '';
+    receiptText = `*${biz.name}*\nReceipt #${no} · ${date}\n` + items.map(i => `${i.quantity} × ${i.product_name} - ${N(i.line_total)}`).join('\n') +
+      `\nTotal: ${N(sale.total)}` + (balance > 0 ? `\nBalance owing: ${N(balance)}` : '\nPaid in full.') + `\n${biz.receipt_footer || 'Thank you for your business.'}`;
+    document.getElementById('rActions').style.display = '';
+  } catch (err) { box.innerHTML = `<p class="text-soft" style="text-align:center;padding:30px;">${Recorda.util.esc(err.message)}</p>`; }
+});
+function whatsappReceipt() { window.open(Recorda.util.whatsappLink(receiptPhone, receiptText), '_blank'); }
+async function shareReceipt() {
+  if (navigator.share) { try { await navigator.share({ title: 'Receipt', text: receiptText }); } catch (_) {} }
+  else { try { await navigator.clipboard.writeText(receiptText); showToast('Receipt copied'); } catch (_) { showToast('Sharing is not supported on this device'); } }
+}
+
+</script>
 </body>
 </html>

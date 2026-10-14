@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ankara Fabric — Recorda</title>
@@ -17,7 +23,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -35,61 +41,60 @@
   <div class="main-col">
     <div class="page">
       <a href="products.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Products</a>
-
       <div class="pd-head">
-        <div class="pd-thumb"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2l1.5 4h9L18 2M6 8h12l-1 12H7L6 8z" stroke="currentColor" stroke-width="1.6"/></svg></div>
+        <div class="pd-thumb" id="pdThumb"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2l1.5 4h9L18 2M6 8h12l-1 12H7L6 8z" stroke="currentColor" stroke-width="1.6"/></svg></div>
         <div class="pd-info">
-          <span class="badge badge-red mb-2" style="display:inline-flex;">Low stock</span>
-          <h1>Ankara Fabric</h1>
-          <div class="text-soft text-sm">Fashion · Supplier: Kano Textiles</div>
+          <span class="badge badge-red mb-2" id="pdLow" style="display:none;">Low stock</span>
+          <h1 id="pdName">Loading…</h1>
+          <div class="text-soft text-sm" id="pdSub"></div>
           <div class="pd-actions">
             <button class="btn btn-primary btn-sm" onclick="location.href='new-sale.html'">Sell</button>
-            <button class="btn btn-secondary btn-sm" onclick="openOverlay('addStock')">Add Stock</button>
+            <button class="btn btn-secondary btn-sm" onclick="openOverlay('stockOverlay')">Add Stock</button>
+            <button class="btn btn-secondary btn-sm" onclick="openEdit()">Edit</button>
           </div>
         </div>
       </div>
-
       <div class="stat-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:22px;">
-        <div class="card stat-card"><div class="stat-label">Selling price</div><div class="ledger-figure"><div class="stat-value num" style="font-size:20px;">₦8,500</div></div></div>
-        <div class="card stat-card"><div class="stat-label">Buying price</div><div class="ledger-figure"><div class="stat-value num" style="font-size:20px;">₦5,200</div></div></div>
-        <div class="card stat-card"><div class="stat-label">Current stock</div><div class="ledger-figure"><div class="stat-value num" style="font-size:20px;color:var(--red);">4 units</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Selling price</div><div class="ledger-figure"><div class="stat-value num" style="font-size:20px;" id="pdSell">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Buying price</div><div class="ledger-figure"><div class="stat-value num" style="font-size:20px;" id="pdBuy">₦0</div></div></div>
+        <div class="card stat-card"><div class="stat-label">Current stock</div><div class="ledger-figure"><div class="stat-value num" style="font-size:20px;" id="pdStock">0</div></div></div>
       </div>
-
-      <div class="tabs" style="display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;">
-        <div style="padding:11px 4px;margin-right:22px;font-weight:700;font-size:14px;color:var(--ink);border-bottom:2px solid var(--accent);">Overview</div>
-        <div style="padding:11px 4px;margin-right:22px;font-weight:700;font-size:14px;color:var(--ink-faint);">Stock History</div>
-        <div style="padding:11px 4px;margin-right:22px;font-weight:700;font-size:14px;color:var(--ink-faint);">Sales</div>
+      <div style="display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px;" id="pdTabs">
+        <div class="pd-tab" data-t="overview" style="cursor:pointer;padding:11px 4px;margin-right:22px;font-weight:700;font-size:14px;color:var(--ink);border-bottom:2px solid var(--accent);">Overview</div>
+        <div class="pd-tab" data-t="sales" style="cursor:pointer;padding:11px 4px;margin-right:22px;font-weight:700;font-size:14px;color:var(--ink-faint);border-bottom:2px solid transparent;">Sales</div>
       </div>
+      <div class="card card-pad" id="pdBody"></div>
+      <div style="margin-top:22px;"><button class="btn btn-danger btn-sm" onclick="deleteProduct()">Delete product</button></div>
 
-      <div class="card card-pad">
-        <div class="section-title" style="margin-bottom:10px;"><h2>Stock movement</h2></div>
-        <div class="activity-row">
-          <div class="act-icon" style="background:var(--red-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--red);"><path d="M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="act-body"><div class="act-title">Sold to Aisha Bello</div><div class="act-sub">Aug 20 · −6 units</div></div>
-          <div class="act-amount minus num">−6</div>
+      <div class="overlay" id="stockOverlay"><div class="sheet">
+        <div class="sheet-head"><h3>Add Stock</h3><button class="close-x" onclick="closeOverlay('stockOverlay')">✕</button></div>
+        <div class="sheet-body"><div class="field"><label>Quantity to add</label><input type="number" id="stockQty" min="1" placeholder="e.g. 20"></div></div>
+        <div class="sheet-foot"><button class="btn btn-primary btn-block" onclick="addStock()">Add Stock</button></div>
+      </div></div>
+
+      <div class="overlay" id="editOverlay"><div class="sheet">
+        <div class="sheet-head"><h3>Edit Product</h3><button class="close-x" onclick="closeOverlay('editOverlay')">✕</button></div>
+        <div class="sheet-body">
+          <div class="field"><label>Product name</label><input type="text" id="eName"></div>
+          <div class="field"><label>Category</label><input type="text" id="eCat"></div>
+          <div class="grid-2">
+            <div class="field"><label>Buying price</label><input type="number" id="eBuy"></div>
+            <div class="field"><label>Selling price</label><input type="number" id="eSell"></div>
+          </div>
+          <div class="grid-2">
+            <div class="field"><label>Quantity</label><input type="number" id="eQty"></div>
+            <div class="field"><label>Low-stock threshold</label><input type="number" id="eLow"></div>
+          </div>
+          <div class="field"><label>Supplier</label><input type="text" id="eSup"></div>
+          <div class="field"><label>Replace image</label><input type="file" id="eImg" accept="image/*"></div>
         </div>
-        <div class="activity-row">
-          <div class="act-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <div class="act-body"><div class="act-title">Stock added</div><div class="act-sub">Aug 5 · Kano Textiles</div></div>
-          <div class="act-amount plus num">+10</div>
-        </div>
-      </div>
-
+        <div class="sheet-foot"><button class="btn btn-primary btn-block" id="eBtn" onclick="saveEdit()">Save Changes</button></div>
+      </div></div>
     </div>
   </div>
 </div>
 
-<div class="overlay" id="addStock">
-  <div class="sheet">
-    <div class="sheet-head"><h3>Add Stock</h3><button class="close-x" onclick="closeOverlay('addStock')">✕</button></div>
-    <div class="sheet-body">
-      <div class="field"><label>Quantity to add</label><input type="number" placeholder="e.g. 20"></div>
-      <div class="field"><label>Buying price per unit</label><input type="number" placeholder="₦0.00" value="5200"></div>
-      <div class="field"><label>Supplier <span class="hint">(optional)</span></label><input type="text" value="Kano Textiles"></div>
-    </div>
-    <div class="sheet-foot"><button class="btn btn-primary btn-block" onclick="closeOverlay('addStock'); showToast('Stock updated ✓')">Add Stock</button></div>
-  </div>
-</div>
+
 
 <nav class="bottom-nav">
   <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
@@ -103,5 +108,95 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const N = n => Recorda.util.naira(n);
+const E = Recorda.util.esc;
+const pid = new URLSearchParams(location.search).get('id');
+let prod = null, soldRows = [], ptab = 'overview';
+
+async function loadProduct() {
+  if (!pid) { document.getElementById('pdName').textContent = 'No product selected'; return; }
+  try { [prod, soldRows] = await Promise.all([Recorda.products.get(pid), Recorda.products.salesOf(pid)]); }
+  catch (err) { showToast(err.message); return; }
+  const low = prod.quantity <= prod.low_stock_threshold;
+  document.getElementById('pdName').textContent = prod.name;
+  document.getElementById('pdSub').textContent = [prod.category, prod.supplier ? 'Supplier: ' + prod.supplier : ''].filter(Boolean).join(' · ');
+  document.getElementById('pdLow').style.display = low ? 'inline-flex' : 'none';
+  document.getElementById('pdSell').textContent = N(prod.selling_price);
+  document.getElementById('pdBuy').textContent = N(prod.buying_price);
+  const st = document.getElementById('pdStock');
+  st.textContent = prod.quantity + (prod.quantity === 1 ? ' unit' : ' units');
+  st.style.color = low ? 'var(--red)' : '';
+  if (prod.image_url) document.getElementById('pdThumb').innerHTML = `<img src="${E(prod.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
+  renderPd();
+}
+function renderPd() {
+  document.querySelectorAll('.pd-tab').forEach(t => {
+    const on = t.dataset.t === ptab;
+    t.style.color = on ? 'var(--ink)' : 'var(--ink-faint)';
+    t.style.borderBottomColor = on ? 'var(--accent)' : 'transparent';
+  });
+  const box = document.getElementById('pdBody');
+  if (ptab === 'overview') {
+    const unit = Number(prod.selling_price) - Number(prod.buying_price);
+    const sold = soldRows.reduce((t, r) => t + r.quantity, 0);
+    const rev = soldRows.reduce((t, r) => t + Number(r.line_total), 0);
+    const row = (l, v) => `<div class="detail-row"><span class="label">${l}</span><span class="value">${v}</span></div>`;
+    box.innerHTML = row('Profit per unit', '<span class="num">' + N(unit) + '</span>') +
+      row('Stock value (at cost)', '<span class="num">' + N(prod.quantity * Number(prod.buying_price)) + '</span>') +
+      row('Units sold (recent)', sold) + row('Revenue (recent)', '<span class="num">' + N(rev) + '</span>') +
+      row('Low-stock alert at', prod.low_stock_threshold + ' units');
+  } else {
+    box.innerHTML = soldRows.length ? soldRows.map(r => `<div class="activity-row" style="cursor:pointer;" onclick="location.href='transaction-detail.html?kind=sale&id=${r.sales?.id}'">
+      <div class="act-body"><div class="act-title">${r.quantity} × ${E(prod.name)}</div><div class="act-sub">${Recorda.util.prettyDate(r.sales?.sale_date)}${r.sales?.customers ? ' · ' + E(r.sales.customers.name) : ''}</div></div>
+      <div class="act-amount plus num">${N(r.line_total)}</div></div>`).join('') : '<p class="text-soft text-sm">No sales of this product yet.</p>';
+  }
+}
+document.querySelectorAll('.pd-tab').forEach(t => t.addEventListener('click', () => { ptab = t.dataset.t; renderPd(); }));
+
+async function addStock() {
+  const qty = parseInt(document.getElementById('stockQty').value);
+  if (!(qty > 0)) { showToast('Enter a quantity'); return; }
+  try { await Recorda.products.addStock(pid, qty); closeOverlay('stockOverlay'); document.getElementById('stockQty').value = ''; showToast('Stock updated ✓'); await loadProduct(); }
+  catch (err) { showToast(err.message); }
+}
+function openEdit() {
+  document.getElementById('eName').value = prod.name || '';
+  document.getElementById('eCat').value = prod.category || '';
+  document.getElementById('eBuy').value = prod.buying_price;
+  document.getElementById('eSell').value = prod.selling_price;
+  document.getElementById('eQty').value = prod.quantity;
+  document.getElementById('eLow').value = prod.low_stock_threshold;
+  document.getElementById('eSup').value = prod.supplier || '';
+  openOverlay('editOverlay');
+}
+async function saveEdit() {
+  const name = document.getElementById('eName').value.trim();
+  if (!name) { showToast('Name is required'); return; }
+  const btn = document.getElementById('eBtn'); btn.disabled = true;
+  try {
+    const fields = {
+      name, category: document.getElementById('eCat').value.trim() || null,
+      buying_price: Number(document.getElementById('eBuy').value) || 0,
+      selling_price: Number(document.getElementById('eSell').value) || 0,
+      quantity: parseInt(document.getElementById('eQty').value) || 0,
+      low_stock_threshold: parseInt(document.getElementById('eLow').value) || 5,
+      supplier: document.getElementById('eSup').value.trim() || null,
+    };
+    const img = document.getElementById('eImg').files[0];
+    if (img) fields.image_url = await Recorda.products.uploadImage(img);
+    await Recorda.products.update(pid, fields);
+    closeOverlay('editOverlay'); showToast('Product updated ✓'); await loadProduct();
+  } catch (err) { showToast(err.message); }
+  btn.disabled = false;
+}
+async function deleteProduct() {
+  if (!confirm(`Delete ${prod.name}? Past sales keep the product name.`)) return;
+  try { await Recorda.products.remove(pid); location.href = 'products.html'; } catch (err) { showToast(err.message); }
+}
+document.addEventListener('DOMContentLoaded', loadProduct);
+
+</script>
 </body>
 </html>

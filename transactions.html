@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transactions — Recorda</title>
@@ -10,7 +16,7 @@
 <div class="app-shell">
 
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -87,7 +93,7 @@
     <div class="sheet-head"><h3>What do you want to record?</h3><button class="close-x" onclick="closeOverlay('addSheet')">✕</button></div>
     <div class="sheet-body">
       <div class="option-tile" onclick="location.href='new-sale.html'">
-        <div class="oi" style="background:var(--accent-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="oi" style="background:var(--ok-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--ok-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div><div class="ot-title">Sale</div><div class="ot-sub">Record a product or service sale</div></div>
       </div>
       <div class="option-tile" onclick="location.href='new-expense.html'">
@@ -142,7 +148,7 @@ function renderTx(){
       <td>${cname ? `<div class="row-flex gap-2"><div class="avatar-sm">${Recorda.util.esc(Recorda.util.initials(cname))}</div>${Recorda.util.esc(cname)}</div>` : '—'}</td>
       <td><span class="badge ${badge}">${t.kind[0].toUpperCase() + t.kind.slice(1)}</span></td>
       <td>${Recorda.util.esc(t.payment_method || '—')}</td>
-      <td class="num" style="font-weight:800; ${out ? '' : 'color:var(--accent-deep);'}">${out ? '-' : '+'}${N(t.amount)}</td>
+      <td class="num" style="font-weight:800; ${out ? '' : 'color:var(--ok-deep);'}">${out ? '-' : '+'}${N(t.amount)}</td>
       <td><span class="badge ${status[0]}">${status[1]}</span></td>
     </tr>`;
   }).join('');

@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Records — Recorda</title>
@@ -21,7 +27,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -46,37 +52,7 @@
         </button>
       </div>
 
-      <div class="rec-grid">
-        <a href="customers.html" class="card rec-card">
-          <div class="rec-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg></div>
-          <div class="rec-title">Customers</div>
-          <div class="rec-count">4 records · built-in</div>
-        </a>
-        <a href="products.html" class="card rec-card">
-          <div class="rec-icon" style="background:var(--amber-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-          <div class="rec-title">Products</div>
-          <div class="rec-count">4 records · built-in</div>
-        </a>
-        <a href="custom-record-list.html" class="card rec-card">
-          <div class="rec-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h15V6H3v7z" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/></svg></div>
-          <div class="rec-title">Vehicles</div>
-          <div class="rec-count">2 records · custom</div>
-        </a>
-        <a href="#" class="card rec-card">
-          <div class="rec-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
-          <div class="rec-title">Tenants</div>
-          <div class="rec-count">0 records · custom</div>
-        </a>
-        <a href="#" class="card rec-card">
-          <div class="rec-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C8 6 6 9.5 6 13a6 6 0 0012 0c0-3.5-2-7-6-11z" stroke="currentColor" stroke-width="1.8"/></svg></div>
-          <div class="rec-title">Farm Workers</div>
-          <div class="rec-count">0 records · custom</div>
-        </a>
-        <button class="rec-new" onclick="location.href='create-record-type.html'">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          Create Record Type
-        </button>
-      </div>
+      <div class="rec-grid" id="recGrid"></div>
 
     </div>
   </div>
@@ -93,5 +69,23 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const ICON = { cust: `<svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><circle cx="9" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M3 20a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8"/></svg>`, prod: `<svg viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M4 4h16v16H4V4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`, custom: `<svg viewBox="0 0 24 24" fill="none"><path d="M3 13h15V6H3v7z" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="18" r="1.5" stroke="currentColor" stroke-width="1.8"/></svg>`, plus: `<svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>` };
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const grid = document.getElementById('recGrid');
+  try {
+    const [customers, products, types, counts] = await Promise.all([Recorda.customers.list(), Recorda.products.list(), Recorda.records.types(), Recorda.records.counts()]);
+    const E = Recorda.util.esc;
+    grid.innerHTML = `
+      <a href="customers.html" class="card rec-card"><div class="rec-icon" style="background:var(--accent-tint);">${ICON.cust}</div><div class="rec-title">Customers</div><div class="rec-count">${customers.length} records · built-in</div></a>
+      <a href="products.html" class="card rec-card"><div class="rec-icon" style="background:var(--amber-tint);">${ICON.prod}</div><div class="rec-title">Products</div><div class="rec-count">${products.length} records · built-in</div></a>` +
+      types.map(t => `<a href="custom-record-list.html?id=${t.id}" class="card rec-card"><div class="rec-icon">${ICON.custom}</div><div class="rec-title">${E(t.name)}</div><div class="rec-count">${counts[t.id] || 0} records · custom</div></a>`).join('') +
+      `<button class="rec-new" onclick="location.href='create-record-type.html'">${ICON.plus} Create Record Type</button>`;
+  } catch (err) { showToast(err.message); }
+});
+
+</script>
 </body>
 </html>

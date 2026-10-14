@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — Recorda</title>
@@ -10,7 +16,7 @@
   .chart-bar-group{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; justify-content:flex-end; height:100%; }
   .chart-bars{ display:flex; gap:4px; align-items:flex-end; height:100%; width:100%; justify-content:center; }
   .cb{ width:14px; border-radius:4px 4px 0 0; transition: height .5s ease; }
-  .cb.income{ background: var(--accent); }
+  .cb.income{ background: var(--ok); }
   .cb.expense{ background: var(--line-strong); }
   .chart-label{ font-size:11.5px; color:var(--ink-faint); font-weight:600; }
   .period-tabs{ display:flex; gap:4px; background:var(--paper); border-radius:10px; padding:4px; }
@@ -25,7 +31,7 @@
 <div class="app-shell">
 
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -58,7 +64,7 @@
         </div>
         <button class="btn btn-secondary" onclick="location.href='notifications.html'">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 01-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span style="position:relative;">Notifications<span style="position:absolute;top:-8px;right:-12px;width:7px;height:7px;border-radius:50%;background:var(--red);"></span></span>
+          <span style="position:relative;">Notifications<span id="bellDot" style="position:absolute;top:-8px;right:-12px;width:7px;height:7px;border-radius:50%;background:var(--red);display:none;"></span></span>
         </button>
       </div>
 
@@ -90,7 +96,7 @@
         <div class="section-title"><h2>Quick actions</h2></div>
         <div class="quick-actions">
           <button class="qa-btn" onclick="openOverlay('addSheet')">
-            <div class="qa-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="qa-icon" style="background:var(--ok-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--ok-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div class="qa-title">Record Sale</div>
           </button>
           <button class="qa-btn" onclick="openOverlay('addSheet')">
@@ -121,7 +127,7 @@
           </div>
           <div class="chart-wrap" id="chartWrap"></div>
           <div class="legend">
-            <span><div class="dot" style="background:var(--accent);"></div>Income</span>
+            <span><div class="dot" style="background:var(--ok);"></div>Income</span>
             <span><div class="dot" style="background:var(--line-strong);"></div>Expenses</span>
           </div>
         </div>
@@ -156,7 +162,7 @@
     <div class="sheet-body">
       <div id="sheet-picker">
         <div class="option-tile" onclick="location.href='new-sale.html'">
-          <div class="oi" style="background:var(--accent-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="oi" style="background:var(--ok-tint);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="color:var(--ok-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div><div class="ot-title">Sale</div><div class="ot-sub">Record a product or service sale</div></div>
         </div>
         <div class="option-tile" onclick="location.href='new-payment.html'">
@@ -200,7 +206,7 @@
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
 <script>
 const ICONS = {
-  sale: `<div class="act-icon" style="background:var(--accent-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--accent-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
+  sale: `<div class="act-icon" style="background:var(--ok-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--ok-deep);"><path d="M3 17l6-6 4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
   expense: `<div class="act-icon" style="background:var(--amber-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--amber);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>`,
   payment: `<div class="act-icon" style="background:var(--blue-tint);"><svg viewBox="0 0 24 24" fill="none" style="color:var(--blue);"><path d="M12 8v5m0 4h.01M10.3 2.9L1.8 17a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 2.9a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`,
 };
@@ -275,10 +281,13 @@ async function loadDashboard(){
     document.getElementById('dashGreeting').textContent = `${greeting()}${first ? ', ' + first : ''} 👋`;
     document.getElementById('dashSub').textContent = `Here's how ${biz.name} is doing this month.`;
     document.getElementById('bizName').textContent = biz.name;
-    document.getElementById('bizAvatar').textContent = Recorda.util.initials(biz.name);
+    if (biz.logo_url) document.getElementById('bizAvatar').innerHTML = `<img src="${Recorda.util.esc(biz.logo_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`;
+    else document.getElementById('bizAvatar').textContent = Recorda.util.initials(biz.name);
+    try { await Recorda.business.refreshAlerts(); } catch (_) {}
+    Recorda.notifications.unreadCount().then(n => { const d = document.getElementById('bellDot'); if (d) d.style.display = n ? '' : 'none'; }).catch(() => {});
     document.getElementById('bizList').innerHTML = bizList.map((b, i) => `
       <div class="option-tile" style="cursor:pointer; ${b.id === bizId ? 'border-color:var(--accent); background:var(--accent-tint);' : ''}" onclick="Recorda.business.switchTo('${b.id}')">
-        <div class="biz-avatar" style="${Recorda.util.avatarStyle(i)}">${Recorda.util.esc(Recorda.util.initials(b.name))}</div>
+        <div class="biz-avatar" style="${Recorda.util.avatarStyle(i)}">${b.logo_url ? `<img src="${Recorda.util.esc(b.logo_url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">` : Recorda.util.esc(Recorda.util.initials(b.name))}</div>
         <div><div class="ot-title">${Recorda.util.esc(b.name)}</div><div class="ot-sub">${Recorda.util.esc(b.type || '')}</div></div>
       </div>`).join('');
 
@@ -297,6 +306,7 @@ async function loadDashboard(){
 
     const overdue = debts.filter(d => d.overdue).length;
     let alerts = '';
+    if (biz.suspended) alerts += `<div class="alert-row alert-amber">${ALERT_SVG.amber}This business is suspended and read-only.${biz.suspended_reason ? ' Reason: ' + Recorda.util.esc(biz.suspended_reason) : ''}</div>`;
     if (overdue) alerts += `<div class="alert-row alert-amber">${ALERT_SVG.amber}${overdue} customer${overdue > 1 ? 's have' : ' has'} overdue balances. <a href="debts.html">Review</a></div>`;
     if (low.length) alerts += `<div class="alert-row alert-blue">${ALERT_SVG.blue}${low.length} product${low.length > 1 ? 's are' : ' is'} running low. <a href="products.html">View stock</a></div>`;
     document.getElementById('alertBox').innerHTML = alerts;

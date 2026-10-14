@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vehicles — Recorda</title>
@@ -12,7 +18,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -30,56 +36,25 @@
   <div class="main-col">
     <div class="page">
       <a href="records.html" class="back-link"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>My Records</a>
-
       <div class="page-head">
-        <div><h1>Vehicles</h1><div class="sub">Custom record type · 5 fields</div></div>
-        <button class="btn btn-primary" onclick="openOverlay('addEntry')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          + Add Entry
-        </button>
+        <div><h1 id="crTitle">Loading…</h1><div class="sub" id="crSub"></div></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" onclick="openEntry()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Add Entry</button>
+        </div>
       </div>
+      <div class="card" style="overflow-x:auto;"><table class="data-table"><thead id="crHead"></thead><tbody id="crBody"></tbody></table></div>
+      <div style="margin-top:22px;"><button class="btn btn-danger btn-sm" onclick="deleteType()">Delete this record type</button></div>
 
-      <div class="card">
-        <table class="data-table">
-          <thead>
-            <tr><th>Vehicle Name</th><th>Plate Number</th><th>Driver</th><th>Purchase Date</th><th>Status</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="cell-primary">Toyota Hiace</td>
-              <td>ABC-123-KD</td>
-              <td>Musa</td>
-              <td>Jan 14, 2025</td>
-              <td><span class="badge badge-green">Active</span></td>
-            </tr>
-            <tr>
-              <td class="cell-primary">Honda Accord</td>
-              <td>KDA-921-AA</td>
-              <td>John</td>
-              <td>Jun 2, 2023</td>
-              <td><span class="badge badge-amber">Maintenance</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
+      <div class="overlay" id="entryOverlay"><div class="sheet">
+        <div class="sheet-head"><h3 id="entryTitle">Add Entry</h3><button class="close-x" onclick="closeOverlay('entryOverlay')">✕</button></div>
+        <div class="sheet-body" id="entryFields"></div>
+        <div class="sheet-foot"><button class="btn btn-primary btn-block" id="entryBtn" onclick="saveEntry()">Save Entry</button></div>
+      </div></div>
     </div>
   </div>
 </div>
 
-<div class="overlay" id="addEntry">
-  <div class="sheet">
-    <div class="sheet-head"><h3>Add Vehicle</h3><button class="close-x" onclick="closeOverlay('addEntry')">✕</button></div>
-    <div class="sheet-body">
-      <div class="field"><label>Vehicle Name</label><input type="text" placeholder="e.g. Toyota Hiace"></div>
-      <div class="field"><label>Plate Number</label><input type="text" placeholder="e.g. ABC-123-KD"></div>
-      <div class="field"><label>Driver</label><input type="text" placeholder="e.g. Musa"></div>
-      <div class="field"><label>Purchase Date</label><input type="date"></div>
-      <div class="field"><label>Status</label><select><option>Active</option><option>Maintenance</option><option>Retired</option></select></div>
-    </div>
-    <div class="sheet-foot"><button class="btn btn-primary btn-block" onclick="closeOverlay('addEntry'); showToast('Vehicle added ✓')">Save Entry</button></div>
-  </div>
-</div>
+
 
 <nav class="bottom-nav">
   <a href="dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Home</a>
@@ -93,5 +68,83 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const N = n => Recorda.util.naira(n);
+const E = Recorda.util.esc;
+const tid = new URLSearchParams(location.search).get('id');
+let rtype = null, entries = [], editingId = null;
+
+function cell(f, v) {
+  if (v === undefined || v === null || v === '') return '—';
+  switch (f.type) {
+    case 'Date': return Recorda.util.prettyDate(v);
+    case 'Currency': return '<span class="num">' + N(v) + '</span>';
+    case 'Checkbox': return v === true || v === 'true' ? '✓' : '—';
+    case 'Dropdown': return `<span class="badge badge-neutral">${E(v)}</span>`;
+    default: return E(v);
+  }
+}
+async function loadType() {
+  if (!tid) { document.getElementById('crTitle').textContent = 'No record type selected'; return; }
+  try { [rtype, entries] = await Promise.all([Recorda.records.getType(tid), Recorda.records.entries(tid)]); }
+  catch (err) { showToast(err.message); return; }
+  document.getElementById('crTitle').textContent = rtype.name;
+  document.getElementById('crSub').textContent = `Custom record type · ${rtype.fields.length} fields` + (rtype.description ? ' · ' + rtype.description : '');
+  document.getElementById('crHead').innerHTML = '<tr>' + rtype.fields.map(f => `<th>${E(f.label)}</th>`).join('') + '<th></th></tr>';
+  document.getElementById('crBody').innerHTML = entries.length ? entries.map(en => `<tr>` +
+    rtype.fields.map((f, i) => `<td class="${i === 0 ? 'cell-primary' : ''}">${cell(f, en.data[f.key])}</td>`).join('') +
+    `<td style="white-space:nowrap;text-align:right;"><button class="btn btn-ghost btn-sm" onclick="openEntry('${en.id}')">Edit</button><button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="deleteEntry('${en.id}')">Delete</button></td></tr>`).join('')
+    : `<tr><td colspan="${rtype.fields.length + 1}" class="text-soft" style="text-align:center;padding:28px;">No entries yet. Tap Add Entry.</td></tr>`;
+}
+function fieldInput(f, v) {
+  const id = 'f_' + f.key;
+  const val = v === undefined || v === null ? '' : v;
+  let input;
+  switch (f.type) {
+    case 'Number': case 'Currency': input = `<input type="number" id="${id}" value="${E(val)}" placeholder="${f.type === 'Currency' ? '₦0.00' : '0'}">`; break;
+    case 'Date': input = `<input type="date" id="${id}" value="${E(val)}">`; break;
+    case 'Phone': input = `<input type="tel" id="${id}" value="${E(val)}">`; break;
+    case 'Email': input = `<input type="email" id="${id}" value="${E(val)}">`; break;
+    case 'Long Text': input = `<textarea id="${id}">${E(val)}</textarea>`; break;
+    case 'Checkbox': input = `<input type="checkbox" id="${id}" ${val === true || val === 'true' ? 'checked' : ''} style="width:auto;min-height:0;">`; break;
+    case 'Dropdown': input = `<select id="${id}"><option value="">Select…</option>${(f.options || []).map(o => `<option ${o === val ? 'selected' : ''}>${E(o)}</option>`).join('')}</select>`; break;
+    default: input = `<input type="text" id="${id}" value="${E(val)}">`;
+  }
+  return `<div class="field"><label>${E(f.label)}</label>${input}</div>`;
+}
+function openEntry(entryId) {
+  editingId = entryId || null;
+  const en = entryId ? entries.find(x => x.id === entryId) : null;
+  document.getElementById('entryTitle').textContent = (en ? 'Edit ' : 'Add ') + rtype.name;
+  document.getElementById('entryFields').innerHTML = rtype.fields.map(f => fieldInput(f, en?.data[f.key])).join('');
+  openOverlay('entryOverlay');
+}
+async function saveEntry() {
+  const data = {};
+  rtype.fields.forEach(f => {
+    const el = document.getElementById('f_' + f.key);
+    if (f.type === 'Checkbox') data[f.key] = el.checked;
+    else if (el.value !== '') data[f.key] = (f.type === 'Number' || f.type === 'Currency') ? Number(el.value) : el.value.trim();
+  });
+  if (!Object.keys(data).length) { showToast('Fill in at least one field'); return; }
+  const btn = document.getElementById('entryBtn'); btn.disabled = true;
+  try {
+    if (editingId) await Recorda.records.updateEntry(editingId, data); else await Recorda.records.addEntry(tid, data);
+    closeOverlay('entryOverlay'); showToast('Saved ✓'); await loadType();
+  } catch (err) { showToast(err.message); }
+  btn.disabled = false;
+}
+async function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  try { await Recorda.records.removeEntry(id); await loadType(); } catch (err) { showToast(err.message); }
+}
+async function deleteType() {
+  if (!confirm(`Delete "${rtype.name}" and all ${entries.length} entries? This cannot be undone.`)) return;
+  try { await Recorda.records.removeType(tid); location.href = 'records.html'; } catch (err) { showToast(err.message); }
+}
+document.addEventListener('DOMContentLoaded', loadType);
+
+</script>
 </body>
 </html>

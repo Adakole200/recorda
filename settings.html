@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" href="brand/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="brand/icon.svg">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1E3FAE">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Settings — Recorda</title>
@@ -26,7 +32,7 @@
 <body>
 <div class="app-shell">
   <aside class="sidebar">
-    <a href="dashboard.html" class="brand"><div class="brand-mark">R</div><div class="brand-name">Recorda</div></a>
+    <a href="dashboard.html" class="brand"><img src="brand/logo.svg" alt="Recorda" class="brand-logo"></a>
     <nav class="nav-group">
       <a href="dashboard.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Dashboard</a>
       <a href="transactions.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9m6 10V5m6 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transactions</a>
@@ -44,64 +50,90 @@
   <div class="main-col">
     <div class="page">
       <div class="page-head"><div><h1>Settings</h1></div></div>
-
+      <div id="suspBanner" class="alert-row alert-amber" style="display:none;margin-bottom:20px;"></div>
       <div class="settings-grid">
         <nav class="settings-nav">
-          <a href="#business" class="active">Business</a>
-          <a href="#team">Team</a>
-          <a href="#records">Records</a>
-          <a href="#notifications">Notifications</a>
-          <a href="#security">Security</a>
-          <a href="#subscription">Subscription</a>
+          <a href="#business" class="active">Business</a><a href="#team">Team</a><a href="#records">Records</a>
+          <a href="#notifications">Notifications</a><a href="#security">Security</a><a href="#subscription">Subscription</a>
         </nav>
-
         <div>
           <div class="settings-section card card-pad" id="business">
             <h3>Business</h3>
-            <div class="setting-row"><div><div class="setting-label">Business information</div><div class="setting-sub">Name, type, and details</div></div><button class="btn btn-secondary btn-sm">Edit</button></div>
-            <div class="setting-row"><div><div class="setting-label">Logo</div><div class="setting-sub">Shown on receipts and reports</div></div><button class="btn btn-secondary btn-sm">Upload</button></div>
-            <div class="setting-row"><div><div class="setting-label">Business type</div><div class="setting-sub">Fashion</div></div><button class="btn btn-secondary btn-sm">Change</button></div>
-            <div class="setting-row"><div><div class="setting-label">Currency</div><div class="setting-sub">₦ Nigerian Naira</div></div><button class="btn btn-secondary btn-sm">Change</button></div>
-            <div class="setting-row"><div><div class="setting-label">Address</div><div class="setting-sub">Kaduna, Nigeria</div></div><button class="btn btn-secondary btn-sm">Edit</button></div>
-            <div class="setting-row"><div><div class="setting-label">Receipt settings</div><div class="setting-sub">Footer note, receipt numbering</div></div><button class="btn btn-secondary btn-sm">Edit</button></div>
+            <div class="setting-row">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div id="logoPreview" class="biz-avatar" style="width:52px;height:52px;border-radius:12px;font-size:18px;overflow:hidden;">··</div>
+                <div><div class="setting-label">Logo</div><div class="setting-sub">Shown on receipts and the dashboard (max 2 MB)</div></div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <input type="file" id="logoFile" accept="image/*" hidden onchange="uploadLogo(this)">
+                <button class="btn btn-secondary btn-sm" onclick="document.getElementById('logoFile').click()">Upload</button>
+                <button class="btn btn-ghost btn-sm" id="logoRemove" style="display:none;" onclick="removeLogo()">Remove</button>
+              </div>
+            </div>
+            <div class="setting-row"><div><div class="setting-label">Business information</div><div class="setting-sub" id="infoSub">Name, type, and contact details</div></div><button class="btn btn-secondary btn-sm" onclick="openInfo()">Edit</button></div>
+            <div class="setting-row"><div><div class="setting-label">Currency</div><div class="setting-sub">₦ Nigerian Naira</div></div></div>
+            <div class="setting-row" style="align-items:flex-end;gap:12px;">
+              <div style="flex:1;"><div class="setting-label">Receipt footer note</div><input type="text" id="footerNote" style="margin-top:8px;" placeholder="Thank you for your business."></div>
+              <button class="btn btn-secondary btn-sm" onclick="saveFooter()">Save</button>
+            </div>
           </div>
 
           <div class="settings-section card card-pad" id="team">
             <h3>Team</h3>
-            <div class="setting-row"><div><div class="setting-label">Staff</div><div class="setting-sub">1 member</div></div><button class="btn btn-secondary btn-sm">Manage</button></div>
-            <div class="setting-row"><div><div class="setting-label">Roles</div><div class="setting-sub">Owner, Staff, Viewer</div></div><button class="btn btn-secondary btn-sm">Manage</button></div>
-            <div class="setting-row"><div><div class="setting-label">Permissions</div><div class="setting-sub">Control who can do what</div></div><button class="btn btn-secondary btn-sm">Manage</button></div>
+            <div id="teamList"></div>
+            <div id="addMemberBox" style="margin-top:16px;display:none;">
+              <div class="setting-label" style="margin-bottom:8px;">Add a team member</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <input type="email" id="memEmail" placeholder="Their Recorda account email" style="flex:1;min-width:200px;">
+                <select id="memRole" style="max-width:130px;"><option value="staff">Staff</option><option value="viewer">Viewer</option></select>
+                <button class="btn btn-primary btn-sm" onclick="addMember()">Add</button>
+              </div>
+              <div class="setting-sub" style="margin-top:8px;">They need to create a Recorda account first. Staff can record sales and expenses; Viewers can only look.</div>
+            </div>
           </div>
 
           <div class="settings-section card card-pad" id="records">
             <h3>Records</h3>
-            <div class="setting-row"><div><div class="setting-label">Custom fields</div><div class="setting-sub">Manage fields across record types</div></div><button class="btn btn-secondary btn-sm">Manage</button></div>
-            <div class="setting-row"><div><div class="setting-label">Categories</div><div class="setting-sub">Expense and product categories</div></div><button class="btn btn-secondary btn-sm">Manage</button></div>
-            <div class="setting-row"><div><div class="setting-label">Payment methods</div><div class="setting-sub">Cash, Transfer, POS, USSD...</div></div><button class="btn btn-secondary btn-sm">Manage</button></div>
+            <div class="setting-row"><div><div class="setting-label">My Records</div><div class="setting-sub">Custom record types like Vehicles or Tenants</div></div><button class="btn btn-secondary btn-sm" onclick="location.href='records.html'">Open</button></div>
+            <div class="setting-row"><div><div class="setting-label">New record type</div><div class="setting-sub">Design your own fields</div></div><button class="btn btn-secondary btn-sm" onclick="location.href='create-record-type.html'">Create</button></div>
           </div>
 
           <div class="settings-section card card-pad" id="notifications">
             <h3>Notifications</h3>
-            <div class="setting-row"><div><div class="setting-label">Debt reminders</div><div class="setting-sub">Notify when a balance is overdue</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-            <div class="setting-row"><div><div class="setting-label">Stock alerts</div><div class="setting-sub">Notify when a product runs low</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-            <div class="setting-row"><div><div class="setting-label">Weekly reports</div><div class="setting-sub">A summary every Monday</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+            <div class="setting-row"><div><div class="setting-label">Debt reminders</div><div class="setting-sub">Alert when a customer's balance is overdue</div></div><div class="toggle" id="tgOverdue" onclick="togglePref('overdue', this)"></div></div>
+            <div class="setting-row"><div><div class="setting-label">Stock alerts</div><div class="setting-sub">Alert when a product runs low</div></div><div class="toggle" id="tgLow" onclick="togglePref('low_stock', this)"></div></div>
           </div>
 
           <div class="settings-section card card-pad" id="security">
             <h3>Security</h3>
-            <div class="setting-row"><div><div class="setting-label">Password</div><div class="setting-sub">Last changed 3 months ago</div></div><button class="btn btn-secondary btn-sm">Change</button></div>
-            <div class="setting-row"><div><div class="setting-label">Two-factor authentication</div><div class="setting-sub">Add an extra layer of security</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
-            <div class="setting-row"><div><div class="setting-label">Active sessions</div><div class="setting-sub">1 device signed in</div></div><button class="btn btn-secondary btn-sm">View</button></div>
+            <div class="setting-label" style="margin-bottom:8px;">Change password</div>
+            <div style="display:grid;gap:10px;max-width:360px;">
+              <input type="password" id="newPw" placeholder="New password (min 6 characters)" autocomplete="new-password">
+              <input type="password" id="newPw2" placeholder="Confirm new password" autocomplete="new-password">
+              <button class="btn btn-secondary btn-sm" style="justify-self:start;" onclick="changePassword()">Update password</button>
+            </div>
+            <div class="setting-row" style="margin-top:16px;"><div><div class="setting-label">Signed in as</div><div class="setting-sub" id="whoami"></div></div><button class="btn btn-danger btn-sm" onclick="Recorda.auth.signOut()">Log out</button></div>
           </div>
 
           <div class="settings-section card card-pad" id="subscription">
             <h3>Subscription</h3>
-            <div class="setting-row"><div><div class="setting-label">Current plan</div><div class="setting-sub">Free plan</div></div><button class="btn btn-primary btn-sm" onclick="location.href='index.html#pricing'">Upgrade</button></div>
-            <div class="setting-row"><div><div class="setting-label">Billing</div><div class="setting-sub">No payment method on file</div></div><button class="btn btn-secondary btn-sm">Add</button></div>
+            <div class="setting-row"><div><div class="setting-label">Current plan</div><div class="setting-sub" id="planName">Free plan</div></div><span class="badge badge-green" id="planBadge">Free</span></div>
+            <div class="setting-row"><div><div class="setting-label">Billing</div><div class="setting-sub">Paid plans are coming soon. You'll be notified here.</div></div></div>
           </div>
         </div>
       </div>
 
+      <div class="overlay" id="infoOverlay"><div class="sheet">
+        <div class="sheet-head"><h3>Business information</h3><button class="close-x" onclick="closeOverlay('infoOverlay')">✕</button></div>
+        <div class="sheet-body">
+          <div class="field"><label>Business name</label><input type="text" id="iName"></div>
+          <div class="field"><label>Business type</label><select id="iType"><option>Retail</option><option>Fashion</option><option>Food</option><option>Services</option><option>Agriculture</option><option>Transport</option><option>Real Estate</option><option>Other</option></select></div>
+          <div class="field"><label>Phone</label><input type="tel" id="iPhone"></div>
+          <div class="field"><label>Email</label><input type="email" id="iEmail"></div>
+          <div class="field"><label>Address</label><input type="text" id="iAddr" placeholder="e.g. Kaduna, Nigeria"></div>
+        </div>
+        <div class="sheet-foot"><button class="btn btn-primary btn-block" onclick="saveInfo()">Save</button></div>
+      </div></div>
     </div>
   </div>
 </div>
@@ -117,5 +149,110 @@
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 <script>Recorda.auth.requireAuth().catch(()=>{});</script>
+<script>
+
+const E = Recorda.util.esc;
+let biz = null, myRole = null, myId = null;
+
+async function loadSettings() {
+  try {
+    const u = await Recorda.auth.user(); myId = u.id;
+    document.getElementById('whoami').textContent = u.email;
+    [biz, myRole] = await Promise.all([Recorda.business.get(), Recorda.business.myRole()]);
+  } catch (err) { showToast(err.message); return; }
+  renderBiz();
+  loadTeam();
+}
+function renderBiz() {
+  const lp = document.getElementById('logoPreview');
+  if (biz.logo_url) { lp.innerHTML = `<img src="${E(biz.logo_url)}" alt="" style="width:100%;height:100%;object-fit:cover;">`; }
+  else { lp.textContent = Recorda.util.initials(biz.name); }
+  document.getElementById('logoRemove').style.display = biz.logo_url ? '' : 'none';
+  document.getElementById('infoSub').textContent = [biz.name, biz.type, biz.phone, biz.address].filter(Boolean).join(' · ');
+  document.getElementById('footerNote').value = biz.receipt_footer || '';
+  const prefs = biz.notification_prefs || {};
+  document.getElementById('tgOverdue').classList.toggle('on', prefs.overdue !== false);
+  document.getElementById('tgLow').classList.toggle('on', prefs.low_stock !== false);
+  const plan = biz.plan || 'free';
+  document.getElementById('planName').textContent = plan.charAt(0).toUpperCase() + plan.slice(1) + ' plan';
+  document.getElementById('planBadge').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+  const sb = document.getElementById('suspBanner');
+  if (biz.suspended) { sb.style.display = 'flex'; sb.textContent = 'This business is suspended and read-only.' + (biz.suspended_reason ? ' Reason: ' + biz.suspended_reason : ''); }
+  document.getElementById('addMemberBox').style.display = myRole === 'owner' ? 'block' : 'none';
+}
+async function uploadLogo(input) {
+  const file = input.files[0]; if (!file) return;
+  try { showToast('Uploading…'); await Recorda.business.uploadLogo(file); biz = await Recorda.business.get(); renderBiz(); showToast('Logo updated ✓'); }
+  catch (err) { showToast(err.message); }
+  input.value = '';
+}
+async function removeLogo() {
+  try { await Recorda.business.update({ logo_url: null }); biz = await Recorda.business.get(); renderBiz(); showToast('Logo removed'); } catch (err) { showToast(err.message); }
+}
+function openInfo() {
+  document.getElementById('iName').value = biz.name || '';
+  document.getElementById('iType').value = biz.type || 'Other';
+  document.getElementById('iPhone').value = biz.phone || '';
+  document.getElementById('iEmail').value = biz.email || '';
+  document.getElementById('iAddr').value = biz.address || '';
+  openOverlay('infoOverlay');
+}
+async function saveInfo() {
+  const name = document.getElementById('iName').value.trim();
+  if (!name) { showToast('Business name is required'); return; }
+  try {
+    await Recorda.business.update({ name, type: document.getElementById('iType').value, phone: document.getElementById('iPhone').value.trim() || null, email: document.getElementById('iEmail').value.trim() || null, address: document.getElementById('iAddr').value.trim() || null });
+    biz = await Recorda.business.get(); renderBiz(); closeOverlay('infoOverlay'); showToast('Saved ✓');
+  } catch (err) { showToast(err.message); }
+}
+async function saveFooter() {
+  try { await Recorda.business.update({ receipt_footer: document.getElementById('footerNote').value.trim() || null }); showToast('Receipt footer saved ✓'); } catch (err) { showToast(err.message); }
+}
+async function togglePref(key, el) {
+  const prefs = { ...(biz.notification_prefs || {}) };
+  prefs[key] = !el.classList.contains('on');
+  try { await Recorda.business.updatePrefs(prefs); biz.notification_prefs = prefs; el.classList.toggle('on', prefs[key]); showToast('Saved ✓'); }
+  catch (err) { showToast(err.message); }
+}
+async function loadTeam() {
+  const box = document.getElementById('teamList');
+  try {
+    const team = await Recorda.business.team();
+    box.innerHTML = team.map(m => {
+      const me = m.user_id === myId;
+      const control = (myRole === 'owner' && !me && m.role !== 'owner')
+        ? `<select onchange="changeRole('${m.user_id}', this.value)" style="max-width:110px;"><option value="staff" ${m.role === 'staff' ? 'selected' : ''}>Staff</option><option value="viewer" ${m.role === 'viewer' ? 'selected' : ''}>Viewer</option></select>
+           <button class="btn btn-ghost btn-sm" style="color:var(--red);" onclick="removeMember('${m.user_id}')">Remove</button>`
+        : `<span class="badge badge-neutral">${E(m.role)}</span>`;
+      return `<div class="setting-row"><div><div class="setting-label">${E(m.full_name || m.email || 'Member')}${me ? ' (you)' : ''}</div><div class="setting-sub">${E(m.email || '')}</div></div><div style="display:flex;gap:8px;align-items:center;">${control}</div></div>`;
+    }).join('');
+  } catch (err) { box.innerHTML = `<p class="text-soft text-sm">${E(err.message)}</p>`; }
+}
+async function addMember() {
+  const email = document.getElementById('memEmail').value.trim();
+  if (!email) { showToast('Enter their email'); return; }
+  try { await Recorda.business.addMember(email, document.getElementById('memRole').value); document.getElementById('memEmail').value = ''; showToast('Team member added ✓'); loadTeam(); }
+  catch (err) { showToast(err.message); }
+}
+async function changeRole(uid, role) {
+  try { await Recorda.business.setRole(uid, role); showToast('Role updated ✓'); } catch (err) { showToast(err.message); loadTeam(); }
+}
+async function removeMember(uid) {
+  if (!confirm('Remove this team member?')) return;
+  try { await Recorda.business.removeMember(uid); showToast('Removed'); loadTeam(); } catch (err) { showToast(err.message); }
+}
+async function changePassword() {
+  const a = document.getElementById('newPw').value, b = document.getElementById('newPw2').value;
+  if (a.length < 6) { showToast('Password must be at least 6 characters'); return; }
+  if (a !== b) { showToast('Passwords do not match'); return; }
+  try { await Recorda.auth.updatePassword(a); document.getElementById('newPw').value = document.getElementById('newPw2').value = ''; showToast('Password updated ✓'); }
+  catch (err) { showToast(err.message); }
+}
+document.querySelectorAll('.settings-nav a').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('.settings-nav a').forEach(x => x.classList.remove('active')); a.classList.add('active');
+}));
+document.addEventListener('DOMContentLoaded', loadSettings);
+
+</script>
 </body>
 </html>
